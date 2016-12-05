@@ -16,7 +16,6 @@ vector<Person> Storage::getPersons() {
         int gender = query.value("gender").toUInt();
         int birthYear = query.value("birth_year").toUInt();
         int deathYear = query.value("death_year").toInt();
-        cout << name << " " << gender << " " << birthYear << " " << deathYear << endl;
         persons.push_back(Person(name, gender, birthYear, deathYear));
     }
     return persons;
