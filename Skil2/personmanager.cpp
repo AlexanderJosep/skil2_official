@@ -235,7 +235,6 @@ string PersonManager::capitialize(string s) {
             capitalizeNext = true;
         }
     }
-    delete c;
     return string(out);
 }
 
