@@ -16,7 +16,9 @@ SOURCES += main.cpp \
     console.cpp \
     storage.cpp \
     snake.cpp \
-    snakegrid.cpp
+    snakegrid.cpp \
+    computer.cpp \
+    computermanager.cpp
 
 HEADERS += \
     person.h \
@@ -24,7 +26,9 @@ HEADERS += \
     console.h \
     storage.h \
     snake.h \
-    snakegrid.h
+    snakegrid.h \
+    computer.h \
+    computermanager.h
 
 DISTFILES += \
     persons.txt
