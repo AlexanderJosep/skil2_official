@@ -161,13 +161,13 @@ int Console::getInstruction(int type) {
     return i - (type == 1 ? 9 : 0);
 }
 
-void Console::process(string fileName) {
+void Console::process() {
     time_t t = time(NULL);
     tm* tPtr = localtime(&t);
     int currentYear = tPtr -> tm_year + 1900;
     println("The year is "+to_string(currentYear)+" and you're on Earth.");
 
-    PersonManager pm = PersonManager(fileName, currentYear);
+    PersonManager pm = PersonManager(currentYear);
     printInstructions();
     while(true) {
         int i = getInstruction(0);

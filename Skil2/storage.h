@@ -4,18 +4,24 @@
 #include <string.h>
 #include <vector>
 #include <fstream>
+#include <QtSql>
 #include "person.h"
+#include "console.h"
 
 using namespace std;
 
 class Storage {
 public:
     Storage();
-    Storage(string fileName);
-    vector<Person> getPersons(); // loads persons from a file called 'fileName' and returns them in a vector
-    void savePersons(vector<Person> persons); // saves all persons to the a file called 'fileName'
+    Storage(string dbName);
+    vector<Person> getPersons(); // loads persons from an sql database
+    bool savePerson(Person &person); // saves a person to a sql database
+    bool editPerson(Person &person, int index); // edits a person in a sql database
+    bool removePerson(int index); // removes a person from a sql database
+
 private:
-    string fileName;
+    string dbName;
+    QSqlDatabase database;
 };
 
 #endif // STORAGE_H

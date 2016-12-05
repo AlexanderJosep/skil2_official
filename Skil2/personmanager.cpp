@@ -1,9 +1,8 @@
 #include "personmanager.h"
 
-PersonManager::PersonManager(string fileName, int currentYear) {
-    this -> storage = Storage(fileName);
-    this -> persons = storage.getPersons();
+PersonManager::PersonManager(int currentYear) {
     this -> currentYear = currentYear;
+    this -> persons = storage.getPersons();
 }
 
 void PersonManager::add(Console &c) {
@@ -11,9 +10,13 @@ void PersonManager::add(Console &c) {
     short gender = getGender(c, true);
     short birthYear = getBirthYear(c, true);
     short deathYear = getDeathYear(c, true, birthYear);
-    persons.push_back(Person(name, gender, birthYear, deathYear));
-    storage.savePersons(persons);
-    c.println("You have added "+name+" to the list.");
+    Person person = Person(name, gender, birthYear, deathYear);
+    if(storage.savePerson(person)) {
+        persons.push_back(person);
+        c.println("You have added "+name+" to the list.");
+    } else {
+        c.println("Failed to add "+name+" to the list.");
+    }
     c.newLine();
 }
 
@@ -34,17 +37,23 @@ void PersonManager::edit(Console &c, vector<Person> pList) {
     }
     short deathYear = getDeathYear(c, false, birthYear);
     persons[index].setData(name, gender, birthYear, deathYear);
-    storage.savePersons(persons);
-    c.println("You have edited "+name+" (old name: "+oldName+").");
+    if(storage.editPerson(persons[index], index + 1)) {
+        c.println("You have edited "+name+" (old name: "+oldName+").");
+    } else {
+        c.println("You failed to edit "+name+" (old name: "+oldName+").");
+    }
 }
 
 void PersonManager::remove(Console &c, vector<Person> pList) {
     short index = getRealIndex(pList, getListIndex(c));
     string name = persons[index].getName();
     if(c.getBool("Are you sure you want to delete "+name)) {
-        persons.erase(persons.begin() + index);
-        storage.savePersons(persons);
-        c.println("You have deleted "+name+".");
+        if(storage.removePerson(index + 1)) {
+            persons.erase(persons.begin() + index);
+            c.println("You have deleted "+name+".");
+        } else {
+            c.println("Failed to delete "+name+".");
+        }
     } else {
         c.println("Cancelled.");
     }

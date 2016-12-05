@@ -16,8 +16,7 @@ SOURCES += main.cpp \
     console.cpp \
     storage.cpp \
     snake.cpp \
-    snakegrid.cpp \
-    sql.cpp
+    snakegrid.cpp
 
 HEADERS += \
     person.h \
@@ -25,8 +24,7 @@ HEADERS += \
     console.h \
     storage.h \
     snake.h \
-    snakegrid.h \
-    sql.h
+    snakegrid.h
 
 DISTFILES += \
     persons.txt

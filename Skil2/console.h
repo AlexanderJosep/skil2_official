@@ -27,7 +27,7 @@ public:
     bool getBool(string s); // gets user input bool (y/n)
     string getString(string s, bool ignore); // gets user input string and if ignore is true it ignores the first letter in the input buffer
     int getInstruction(int type); // gets the basic and organization command instruction
-    void process(string fileName); // includes the main program loop
+    void process(); // includes the main program loop
 private:
     int getIndex(char c, int type); // gets the index of the basic/organization command
 };

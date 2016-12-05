@@ -15,7 +15,7 @@ using namespace std;
 
 class PersonManager {
 public:
-    PersonManager(string fileName, int currentYear);
+    PersonManager(int currentYear);
     void add(Console &c); // adds a new person to the list
     void edit(Console &c, vector<Person> pList); // edits a person in the persons list
     void remove(Console &c, vector<Person> pList); // remove a person from the persons list

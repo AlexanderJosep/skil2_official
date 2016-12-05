@@ -4,10 +4,8 @@
 
 using namespace std;
 
-const string FILE_NAME = "persons.txt";
-
 int main() {
     Console c = Console();
-    c.process(FILE_NAME);
+    c.process();
     return 1;
 }
