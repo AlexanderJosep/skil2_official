@@ -4,8 +4,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <cstdlib>
-#include <windows.h>
 #include "console.h"
+#ifdef _WIN32
+    #include <windows.h>
+#endif
 
 using namespace std;
 

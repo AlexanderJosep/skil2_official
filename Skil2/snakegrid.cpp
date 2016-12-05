@@ -121,7 +121,9 @@ int SnakeGrid::getSnakeSize() {
 }
 
 void SnakeGrid::setColor(unsigned short c) {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), c);
+    #ifdef _WIN32
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), c);
+    #endif
 }
 
 void SnakeGrid::print(Console &c) {
