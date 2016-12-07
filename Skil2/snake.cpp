@@ -1,20 +1,42 @@
 #include "snake.h"
+#include <QFrame>
+#include <QApplication>
+#include <QMainWindow>
+#include <QWidget>
 
 using namespace std;
 
-const char keys[8] = {'W', 'A', 'S', 'D', 'w', 'a', 's', 'd'};
-
 Snake::Snake(Console &c) {
-    c.println("Use the keys WASD to control the snake.");
     short gridSize = getGridSize(c, "Grid size(3-50):");
     grid.setGrid(gridSize);
     grid.initialize();
+    //start the snake frame
+    int argc = 0;
+    char* argv[] = {};
+    QApplication application(argc, &argv[0]);
+
+    QMainWindow *window = new QMainWindow();
+    window -> setWindowTitle(QString::fromUtf8("Snake"));
+    window -> resize((gridSize + 2) * (SNAKE_CELL_SIZE + 2), (gridSize + 2) * (SNAKE_CELL_SIZE + 2));
+
+    SnakeWidget *widget = new SnakeWidget(&grid);
+    widget -> setGrid(grid.getGrid());
+//    SnakeFrame *frame = new SnakeFrame();
+  //  frame -> setFrameStyle(QFrame::Box);
+    //frame -> setFixedSize(440, 440);
+    window -> setCentralWidget(widget);
+    window -> show();
+
+    SnakeThread *thread = new SnakeThread(&grid, widget, &c, window);
+    thread -> start();
+    application.exec();
+
 }
 
 short Snake::getGridSize(Console &c, string s) {
     short in;
     while(true) {
-        cout << s << " ";
+        cout << s;
         cin >> in;
         if(in < 3 || in > 50) {
             c.println("Please select a grid size between 3 - 50.");
@@ -26,31 +48,8 @@ short Snake::getGridSize(Console &c, string s) {
     return in;
 }
 
-int Snake::getDirection(Console &c) {
-    cout << "Enter key: ";
-    char in;
-    cin >> in;
-    for(int i = 0; i < 4; i++) {
-        if(keys[i] == in || keys[i + 4] == in) {
-            return i;
-        }
-    }
-    c.println("Invalid key, use WASD.");
-    c.clearBuffer();
-    return getDirection(c);
-}
-
 void Snake::processSnake(Console &c) {
-    while(true) {
-        grid.print(c);
-        if(!grid.update(c, getDirection(c))) {
-            if(grid.hasWon()) {
-                 grid.print(c);
-                 c.println("You WIN. Points: " + to_string(grid.getSnakeSize() - 3));
-            } else {
-                 c.println("You lose. Points: " + to_string(grid.getSnakeSize() - 3));
-            }
-            break;
-        }
-    }
+   // while(true) {
+
+   // }
 }

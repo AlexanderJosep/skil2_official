@@ -21,22 +21,40 @@ void SnakeGrid::initialize() {
     pushSnake();
     setRandomCandy();
     pushCandy();
-    oldDirection = 3;
+    direction = 3;
+    canUpdateDir = true;
+    lostSnakeX = -1;
+    lostSnakeY = -1;
 }
 
-bool SnakeGrid::update(Console &c, int dir) {
-    if((dir == 0 && oldDirection == 2) || (dir == 2 && oldDirection == 0) || (dir == 1 && oldDirection == 3) || (dir == 3 && oldDirection == 1)) {
-        c.println("You can't move to that direction.");
-        return true;
+void SnakeGrid::setDirection(int dir) {
+    // cannot go to the opposite direction, just the sides
+    if(!canUpdateDir || (dir == 0 && direction == 2) || (dir == 2 && direction == 0) || (dir == 1 && direction == 3) || (dir == 3 && direction == 1)) {
+        return;
     }
-    oldDirection = dir;
+    canUpdateDir = false;
+    direction = dir;
+}
+
+bool SnakeGrid::update(Console &c) {
     resetGrid();
-    if(!updateSnake(c, dir)) {
+    if(!updateSnake(c, direction)) {
         return false;
     }
+    canUpdateDir = true;
     pushSnake();
     pushCandy();
     return true;
+}
+
+void SnakeGrid::pushLostSnake() {
+    resetGrid();
+    for(unsigned int i = 1; i < snakeX.size(); i++) {
+        grid[snakeX[i]][snakeY[i]] = 1;
+    }
+    lostSnakeX = snakeX[0] + 1;
+    lostSnakeY = snakeY[0] + 1;
+    pushCandy();
 }
 
 bool SnakeGrid::hasWon() {
@@ -118,6 +136,22 @@ void SnakeGrid::resetGrid() {
 
 int SnakeGrid::getSnakeSize() {
     return snakeX.size();
+}
+
+short** SnakeGrid::getGrid() {
+    return grid;
+}
+
+short SnakeGrid::getGridSize() {
+    return gridSize;
+}
+
+short SnakeGrid::getLostSnakeX() {
+    return lostSnakeX;
+}
+
+short SnakeGrid::getLostSnakeY() {
+    return lostSnakeY;
 }
 
 void SnakeGrid::setColor(unsigned short c) {

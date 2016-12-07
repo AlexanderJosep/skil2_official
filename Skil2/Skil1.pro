@@ -1,6 +1,8 @@
 QT += core
 QT += core sql
-QT -= gui
+QT += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
@@ -18,7 +20,9 @@ SOURCES += main.cpp \
     snake.cpp \
     snakegrid.cpp \
     computer.cpp \
-    computermanager.cpp
+    computermanager.cpp \
+    snakewidget.cpp \
+    snakethread.cpp
 
 HEADERS += \
     person.h \
@@ -28,7 +32,10 @@ HEADERS += \
     snake.h \
     snakegrid.h \
     computer.h \
-    computermanager.h
+    computermanager.h \
+    snakewidget.h \
+    snakethread.h \
+    config.h
 
 DISTFILES += \
     persons.txt
