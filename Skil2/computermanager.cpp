@@ -2,5 +2,4 @@
 
 ComputerManager::ComputerManager() {
 
-
 }

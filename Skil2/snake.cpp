@@ -5,6 +5,7 @@ using namespace std;
 const char keys[8] = {'W', 'A', 'S', 'D', 'w', 'a', 's', 'd'};
 
 Snake::Snake(Console &c) {
+    c.println("Use the keys WASD to control the snake.");
     short gridSize = getGridSize(c, "Grid size(3-50):");
     grid.setGrid(gridSize);
     grid.initialize();
@@ -13,7 +14,7 @@ Snake::Snake(Console &c) {
 short Snake::getGridSize(Console &c, string s) {
     short in;
     while(true) {
-        cout << s;
+        cout << s << " ";
         cin >> in;
         if(in < 3 || in > 50) {
             c.println("Please select a grid size between 3 - 50.");
