@@ -15,21 +15,22 @@ void SnakeWidget::paintEvent(QPaintEvent *event) {
     QPainter painter;
     painter.begin(this);
     painter.setRenderHint(QPainter::Antialiasing);
+   // painter.drawText(QPointF()), "";
     for(int i = 1; i < gridObject -> getGridSize() + 1; i++) {
         for(int j = 1; j < gridObject -> getGridSize() + 1; j++) {
             if(grid[i - 1][j - 1] == 0) {
-                painter.drawRect(QRect(j * (SNAKE_CELL_SIZE + 2) + 2, i * (SNAKE_CELL_SIZE + 2) + 2, SNAKE_CELL_SIZE, SNAKE_CELL_SIZE));
+                painter.drawRect(QRect(j * (SNAKE_CELL_SIZE + 2) + 2, i * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_BAR_OFFSET, SNAKE_CELL_SIZE, SNAKE_CELL_SIZE));
             } else if(grid[i - 1][j - 1] == 1) {
-                painter.drawEllipse(QPointF(j * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_CELL_SIZE / 2 , i * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_CELL_SIZE / 2), SNAKE_CELL_SIZE / 2, SNAKE_CELL_SIZE / 2);
+                painter.drawEllipse(QPointF(j * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_CELL_SIZE / 2 , i * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_CELL_SIZE / 2 + SNAKE_BAR_OFFSET), SNAKE_CELL_SIZE / 2, SNAKE_CELL_SIZE / 2);
             } else {
-                painter.fillRect(QRect(j * (SNAKE_CELL_SIZE + 2) + 2, i * (SNAKE_CELL_SIZE + 2) + 2, SNAKE_CELL_SIZE, SNAKE_CELL_SIZE), QBrush(QColor(128, 128, 255, 128)));
+                painter.fillRect(QRect(j * (SNAKE_CELL_SIZE + 2) + 2, i * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_BAR_OFFSET, SNAKE_CELL_SIZE, SNAKE_CELL_SIZE), QBrush(QColor(128, 128, 255, 128)));
             }
         }
     }
     if(gridObject -> getLostSnakeX() >= 0 && gridObject -> getLostSnakeY() >= 0) {
         int i = gridObject -> getLostSnakeX();
         int j = gridObject -> getLostSnakeY();
-        painter.drawEllipse(QPointF(j * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_CELL_SIZE / 2 , i * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_CELL_SIZE / 2), SNAKE_CELL_SIZE / 2, SNAKE_CELL_SIZE / 2);
+        painter.drawEllipse(QPointF(j * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_CELL_SIZE / 2 , i * (SNAKE_CELL_SIZE + 2) + 2 + SNAKE_CELL_SIZE / 2 + SNAKE_BAR_OFFSET), SNAKE_CELL_SIZE / 2, SNAKE_CELL_SIZE / 2);
     }
     painter.end();
 }

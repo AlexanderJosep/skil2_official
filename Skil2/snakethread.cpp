@@ -19,11 +19,13 @@ void SnakeThread::run() {
                 c -> println("You lose. Points: " + to_string((*grid).getSnakeSize() - 3));
             }
             widget -> setGrid((*grid).getGrid());
-            emit widget -> repaint();
+       //     emit widget -> repaint();
+            widget -> update();
             break;
         }
         widget -> setGrid((*grid).getGrid());
-        emit widget -> repaint();
+      //  emit widget -> repaint();
+        widget -> update();
         msleep(SNAKE_SLEEP_TIME);
     }
 }

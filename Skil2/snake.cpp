@@ -17,13 +17,10 @@ Snake::Snake(Console &c) {
 
     QMainWindow *window = new QMainWindow();
     window -> setWindowTitle(QString::fromUtf8("Snake"));
-    window -> resize((gridSize + 2) * (SNAKE_CELL_SIZE + 2), (gridSize + 2) * (SNAKE_CELL_SIZE + 2));
+    window -> resize((gridSize + 2) * (SNAKE_CELL_SIZE + 2), (gridSize + 2) * (SNAKE_CELL_SIZE + 2) + SNAKE_BAR_OFFSET);
 
     SnakeWidget *widget = new SnakeWidget(&grid);
     widget -> setGrid(grid.getGrid());
-//    SnakeFrame *frame = new SnakeFrame();
-  //  frame -> setFrameStyle(QFrame::Box);
-    //frame -> setFixedSize(440, 440);
     window -> setCentralWidget(widget);
     window -> show();
 
