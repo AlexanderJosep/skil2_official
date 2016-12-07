@@ -8,23 +8,23 @@ SnakeThread::SnakeThread(SnakeGrid *grid, SnakeWidget *widget, Console *c, QMain
 }
 
 void SnakeThread::run() {
-    msleep(1250);
     while( window -> isVisible()) {
+        if(!widget -> hasStarted()) {
+            msleep(25);
+            continue;
+        }
         if(!(grid -> update((*c)))) {
             if(grid -> hasWon()) {
-                 grid -> print((*c));
-                 c -> println("You WIN. Points: " + to_string((*grid).getSnakeSize() - 3));
+                 widget -> setStatus("You WIN!");
             } else {
                 grid -> pushLostSnake();
-                c -> println("You lose. Points: " + to_string((*grid).getSnakeSize() - 3));
+                widget -> setStatus("You lose.");
             }
-            widget -> setGrid((*grid).getGrid());
-       //     emit widget -> repaint();
+            widget -> setGrid(grid -> getGrid());
             widget -> update();
             break;
         }
-        widget -> setGrid((*grid).getGrid());
-      //  emit widget -> repaint();
+        widget -> setGrid(grid -> getGrid());
         widget -> update();
         msleep(SNAKE_SLEEP_TIME);
     }

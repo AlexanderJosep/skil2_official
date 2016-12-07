@@ -8,6 +8,9 @@
 #include <QKeyEvent>
 #include <QRect>
 #include <QPointF>
+#include <QBrush>
+#include <QFontMetrics>
+#include <string>
 #include "snakegrid.h"
 #include "config.h"
 
@@ -16,7 +19,9 @@ using namespace config;
 class SnakeWidget : public QWidget {
 public:
     SnakeWidget(SnakeGrid *gridObject);
+    void setStatus(string status);
     void setGrid(short **grid);
+    bool hasStarted();
 protected:
     virtual void paintEvent(QPaintEvent *event);
     virtual void keyPressEvent(QKeyEvent *event);
@@ -24,6 +29,8 @@ protected:
 private:
     SnakeGrid *gridObject;
     short **grid;
+    bool started;
+    string status;
 };
 
 #endif // SNAKEWIDGET_H

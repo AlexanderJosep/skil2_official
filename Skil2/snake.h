@@ -3,6 +3,11 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <QFrame>
+#include <QApplication>
+#include <QMainWindow>
+#include <QWidget>
+#include <QSize>
 #include "snakegrid.h"
 #include "snakewidget.h"
 #include "snakethread.h"
