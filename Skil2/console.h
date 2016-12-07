@@ -18,7 +18,7 @@ public:
     void println(string s); // prints s and \n to the console
     void newLine(); // prints \n to the console
     void printInstructions(); // prints all basic command instructions
-    void printDisplayInstructions(); // prints all display organization instructions
+    void printDisplayInstructions(int type); // prints all display organization instructions
     void printColumns(bool includeIndex); // print all columns
     void printPersons(vector<Person> persons, bool reverse, bool includeIndex); // print all persons and reverses the output if reverse is true
     void clearBuffer(); // clears the stream buffer until it reaches \n

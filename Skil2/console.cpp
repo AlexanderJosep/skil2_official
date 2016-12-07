@@ -6,12 +6,14 @@
 // no organization, org. names in alphabetical order, org. by gender, org. by birth year, org. by death year
 const char commands[14] = {'d', 's', 'a', 'i', 'q', 'c', 'e', 'r', 'g',
                            'o', 'n', 'g', 'b', 'd'};
-const string instructions[9] = {"Use 'a' to add a person.", "Use 'c' to clear the console.", "Use 'd' to display persons.",
-                                "Use 'e' to edit a person.","Use 'g' to start a game of snake.",
-                                "Use 'i' to display info on instructions.", "Use 'r' to remove a person.",
-                                "Use 's' to search for a person.", "Use 'q' if you want to quit."};
-const string displayInstructions[5] = {"Use 'b' to organize by birth year." ,"Use 'd' to organize by death year." ,"Use 'g' to organize by gender.",
+const string instructions[9] = {"Use 'a' to add computer or person to the list.", "Use 'c' to clear the console.", "Use 'd' to display a list.",
+                                "Use 'e' to edit a list.","Use 'g' to start a game of snake.",
+                                "Use 'i' to display info on instructions.", "Use 'r' to remove from a list.",
+                                "Use 's' to search.", "Use 'q' if you want to quit."};
+const string displayPersonInstructions[5] = {"Use 'b' to organize by birth year." ,"Use 'd' to organize by death year." ,"Use 'g' to organize by gender.",
                                        "Use 'n' to organize by names in alphabetical order." ,"Use 'o' to have no organization."};
+const string displayComputerInstructions[5] = {"Use 'n' to organize by if it was built or not", "Use 'd' to organize by year it was built.", "Use 'g' to organize by type.",
+                                               "Use 'n' to organize by names in alphabetical order.", "Use 'o' to have no organization."};
 
 Console::Console() {
 
@@ -44,10 +46,15 @@ void Console::printInstructions() {
     }
 }
 
-void Console::printDisplayInstructions() {
-    for(int i = 0; i < 5; i++) {
-        println(displayInstructions[i]);
-        //(type == 0 ? "Persons" : "Computer")
+void Console::printDisplayInstructions(int type) {
+    if(type == 0) {
+        for(int i = 0; i < 5; i++) {
+            println(displayPersonInstructions[i]);
+        }
+    } else {
+        for(int i = 0; i < 5; i++) {
+            println(displayComputerInstructions[i]);
+        }
     }
 }
 
@@ -136,7 +143,6 @@ string Console::getString(string s, bool ignore) {
     return in;
 }
 
-
 //type = 0 checks for basic commands, type = 1 checks for display organization commands
 int Console::getIndex(char c, int type) {
     for(int i = type * 9; i < (type == 0 ? 9 : 14); i++) {
@@ -176,12 +182,14 @@ void Console::process() {
         newLine();
         if(i == 0) { // display
             if(getBool("Persons or computers", 'p', 'c')) {
-                printDisplayInstructions();
+                printDisplayInstructions(0);
                 int o = getInstruction(1);
                 bool rev = getBool("Reverse output", 'y', 'n');
                 printPersons(pm.getOrganizedPersons(o), rev, false);
             } else {
+                printDisplayInstructions(1);
 
+                bool rev = getBool("Reverse output", 'y', 'n');
             }
         }
         if(i == 1) { // search
@@ -217,6 +225,5 @@ void Console::process() {
             Snake snake = Snake(*this);
             snake.processSnake(*this);
         }
-
     }
 }
