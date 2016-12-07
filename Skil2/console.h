@@ -24,7 +24,7 @@ public:
     void clearBuffer(); // clears the stream buffer until it reaches \n
     char getChar(string s); // gets user input char
     short getShort(string s); // gets user input short
-    bool getBool(string s); // gets user input bool (y/n)
+    bool getBool(string s, char y, char n); // gets user input bool (y/n)
     string getString(string s, bool ignore); // gets user input string and if ignore is true it ignores the first letter in the input buffer
     int getInstruction(int type); // gets the basic and organization command instruction
     void process(); // includes the main program loop

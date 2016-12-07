@@ -47,6 +47,7 @@ void Console::printInstructions() {
 void Console::printDisplayInstructions() {
     for(int i = 0; i < 5; i++) {
         println(displayInstructions[i]);
+        //(type == 0 ? "Persons" : "Computer")
     }
 }
 
@@ -104,18 +105,18 @@ short Console::getShort(string s) {
     return in;
 }
 
-bool Console::getBool(string s) {
+bool Console::getBool(string s, char y, char n) {
     char c;
     while(true) {
         clearBuffer();
-        print(s + " (y/n): ");
+        print(s + " ("+y+"/"+n+"): ");
         cin >> c;
-        if(c == 'y' || c == 'n') {
+        if(c == y || c == n) {
             break;
         }
         println("Invalid command!");
     }
-    return c == 'y';
+    return c == y;
 }
 
 string Console::getString(string s, bool ignore) {
@@ -162,6 +163,7 @@ int Console::getInstruction(int type) {
 }
 
 void Console::process() {
+    //char pc;
     time_t t = time(NULL);
     tm* tPtr = localtime(&t);
     int currentYear = tPtr -> tm_year + 1900;
@@ -171,12 +173,16 @@ void Console::process() {
     printInstructions();
     while(true) {
         int i = getInstruction(0);
+        newLine();
         if(i == 0) { // display
-            newLine();
-            printDisplayInstructions();
-            int o = getInstruction(1);
-            bool rev = getBool("Reverse output");
-            printPersons(pm.getOrganizedPersons(o), rev, false);
+            if(getBool("Persons or computers", 'p', 'c')) {
+                printDisplayInstructions();
+                int o = getInstruction(1);
+                bool rev = getBool("Reverse output", 'y', 'n');
+                printPersons(pm.getOrganizedPersons(o), rev, false);
+            } else {
+
+            }
         }
         if(i == 1) { // search
             printPersons(pm.getSearchResults(*this), false, false);
@@ -214,4 +220,3 @@ void Console::process() {
 
     }
 }
-

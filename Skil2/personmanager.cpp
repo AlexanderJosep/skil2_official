@@ -47,7 +47,7 @@ void PersonManager::edit(Console &c, vector<Person> pList) {
 void PersonManager::remove(Console &c, vector<Person> pList) {
     short index = getRealIndex(pList, getListIndex(c));
     string name = persons[index].getName();
-    if(c.getBool("Are you sure you want to delete "+name)) {
+    if(c.getBool("Are you sure you want to delete "+name, 'y', 'n')) {
         if(storage.removePerson(index + 1)) {
             persons.erase(persons.begin() + index);
             c.println("You have deleted "+name+".");
@@ -130,7 +130,7 @@ short PersonManager::getBirthYear(Console &c, bool n) {
 
 short PersonManager::getDeathYear(Console &c, bool n, int birthYear) {
     short deathYear = -1;
-    if(c.getBool("Person dead")) {
+    if(c.getBool("Person dead", 'y', 'n')) {
         while(true) {
             string s = n ? "Death year" : "New death year";
             deathYear = c.getShort(s);

@@ -1,11 +1,11 @@
 #include "computer.h"
 #include <string>
 
-Computer::Computer(string name, short year, short computerType, short ifBuilt) {
+Computer::Computer(string name, short year, short computerType, bool built) {
     this -> name = name;
     this -> year = year;
     this -> computerType = computerType;
-    this -> ifBuilt = ifBuilt;
+    this -> built = built;
 }
 
 string Computer::getName() {
@@ -20,33 +20,26 @@ short Computer::getComputerType() {
     return computerType;
 }
 
-short Computer::getIfBuilt() {
-    return ifBuilt;
+short Computer::getBuilt() {
+    return built;
 }
 
-void Computer::setData(string name, short year, short computerType, short ifBuilt) {
+void Computer::setData(string name, short year, short computerType, bool built) {
     this -> name = name;
     this -> year = year;
     this -> computerType = computerType;
-    this -> ifBuilt = ifBuilt;
+    this -> built = built;
 }
 
-string Computer::getStoreOutput() {
-    string copy = name;
-    replace(copy.begin(), copy.end(), ' ', '_' );
-    return copy + " " + to_string(year) + " " + to_string(computerType) + " " + to_string(ifBuilt);
-}
-
-//type: 0/1 = organize by name, 2 = organize by gender, 3 = organize by birth year, 4 = organize by death year
 string Computer::getOutput() {
     ostringstream out;
-    string b = (ifBuilt == 0 ? "Not built" : "Built");
+    string b = (built == 0 ? "Not built" : "Built");
     int priorLength  = 0;
     updateString(out, "" + name, priorLength, 0);
     updateString(out, "" + b, priorLength, 28);
     updateString(out, "" + to_string(computerType), priorLength, 12);
-    if(ifBuilt >= 0) {
-        updateString(out, "" + to_string(ifBuilt), priorLength, 16);
+    if(built >= 0) {
+        updateString(out, "" + to_string(built), priorLength, 16);
     }
     return out.str();
 }
