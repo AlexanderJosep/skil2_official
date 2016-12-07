@@ -25,19 +25,22 @@ void PersonManager::edit(Console &c, vector<Person> pList) {
     string oldName = persons[index].getName();
     c.println("Old name: "+oldName);
     string name = getName(c, false);
-    string oldGender = (persons[index].getGender() == 0 ? "Male" : "Female");
-    c.println("Old gender: "+oldGender);
+    short oldGender = persons[index].getGender() ;
+    string oldGenderString = (oldGender == 0 ? "Male" : "Female");
+    c.println("Old gender: "+oldGenderString);
     short gender = getGender(c, false);
-    c.println("Old birth year: "+to_string(persons[index].getBirthYear()));
+    short oldBirthYear = persons[index].getBirthYear();
+    c.println("Old birth year: "+to_string(oldBirthYear));
     short birthYear = getBirthYear(c, false);
-    if(persons[index].getDeathYear() > 0) {
-         c.println("Old death year: "+to_string(persons[index].getDeathYear()));
+    short oldDeathYear = persons[index].getDeathYear();
+    if(oldDeathYear > 0) {
+         c.println("Old death year: "+to_string(oldDeathYear));
     } else {
          c.println("Old person did not have a death year");
     }
     short deathYear = getDeathYear(c, false, birthYear);
     persons[index].setData(name, gender, birthYear, deathYear);
-    if(storage.editPerson(persons[index], index + 1)) {
+    if(storage.editPerson(persons[index], oldName, oldGender, oldBirthYear, oldDeathYear)) {
         c.println("You have edited "+name+" (old name: "+oldName+").");
     } else {
         c.println("You failed to edit "+name+" (old name: "+oldName+").");
@@ -48,7 +51,7 @@ void PersonManager::remove(Console &c, vector<Person> pList) {
     short index = getRealIndex(pList, getListIndex(c));
     string name = persons[index].getName();
     if(c.getBool("Are you sure you want to delete "+name, 'y', 'n')) {
-        if(storage.removePerson(index + 1)) {
+        if(storage.removePerson(persons[index])) {
             persons.erase(persons.begin() + index);
             c.println("You have deleted "+name+".");
         } else {

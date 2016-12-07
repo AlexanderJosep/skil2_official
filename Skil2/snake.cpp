@@ -48,9 +48,3 @@ short Snake::getGridSize(Console &c, string s) {
     }
     return in;
 }
-
-void Snake::processSnake(Console &c) {
-   // while(true) {
-
-   // }
-}

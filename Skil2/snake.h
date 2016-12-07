@@ -19,7 +19,6 @@ using namespace config;
 class Snake {
 public:
     Snake(Console &c);
-    void processSnake(Console &c); // processes the snake game
 private:
     short getGridSize(Console &c, string s); // gets user input grid size
     SnakeGrid grid;

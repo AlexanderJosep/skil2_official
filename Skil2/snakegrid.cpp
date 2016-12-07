@@ -85,7 +85,7 @@ bool SnakeGrid::updateSnake(Console &c, int dir) {
     }
     snakeX[0] = snakeX[0] + offX;
     snakeY[0] = snakeY[0] + offY;
-    if(snakeX[0] == candyX && snakeY[0] == candyY) {
+    if(snakeX[0] == candyX && snakeY[0] == candyY) { // eat candy
         snakeX.push_back(oldX);
         snakeY.push_back(oldY);
         pushSnake();
@@ -93,7 +93,6 @@ bool SnakeGrid::updateSnake(Console &c, int dir) {
             return false;
         }
         setRandomCandy();
-        c.println("Ate candy!");
     }
     return !(snakeX[0] < 0 || snakeX[0] >= gridSize || snakeY[0] < 0 || snakeY[0] >= gridSize);
 }
@@ -152,30 +151,4 @@ short SnakeGrid::getLostSnakeX() {
 
 short SnakeGrid::getLostSnakeY() {
     return lostSnakeY;
-}
-
-void SnakeGrid::setColor(unsigned short c) {
-    #ifdef _WIN32
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), c);
-    #endif
-}
-
-void SnakeGrid::print(Console &c) {
-     for(int i = 0; i < gridSize; i++) {
-        for(int j = 0; j < gridSize; j++) {
-            if(grid[i][j] == 1 || grid[i][j] == 2) {
-                setColor(grid[i][j] == 1 ? 8 : 15);
-            }
-            string out = grid[i][j] == 0 ? "x" : (grid[i][j] == 1 ? "o" : "O");
-            c.print(out + " ");
-            if(grid[i][j] == 1 || grid[i][j] == 2) {
-                setColor(7);
-            }
-        }
-        c.newLine();
-    }
-    for(int i = 0; i < gridSize * 2; i++) {
-        c.print("_");
-    }
-    c.newLine();
 }

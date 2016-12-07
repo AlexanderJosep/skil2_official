@@ -4,16 +4,19 @@
 
 // display, search, add, info, quit, clear console, edit, remove
 // no organization, org. names in alphabetical order, org. by gender, org. by birth year, org. by death year
-const char commands[14] = {'d', 's', 'a', 'i', 'q', 'c', 'e', 'r', 'g',
-                           'o', 'n', 'g', 'b', 'd'};
+// by built or not, alphabetical, year built, type, no org.
+const char commands[19] = {'d', 's', 'a', 'i', 'q', 'c', 'e', 'r', 'g',
+                           'o', 'n', 'g', 'b', 'd',
+                           'b', 'n', 'y', 't', 'o'};
 const string instructions[9] = {"Use 'a' to add computer or person to the list.", "Use 'c' to clear the console.", "Use 'd' to display a list.",
                                 "Use 'e' to edit a list.","Use 'g' to start a game of snake.",
                                 "Use 'i' to display info on instructions.", "Use 'r' to remove from a list.",
                                 "Use 's' to search.", "Use 'q' if you want to quit."};
 const string displayPersonInstructions[5] = {"Use 'b' to organize by birth year." ,"Use 'd' to organize by death year." ,"Use 'g' to organize by gender.",
                                        "Use 'n' to organize by names in alphabetical order." ,"Use 'o' to have no organization."};
-const string displayComputerInstructions[5] = {"Use 'n' to organize by if it was built or not", "Use 'd' to organize by year it was built.", "Use 'g' to organize by type.",
-                                               "Use 'n' to organize by names in alphabetical order.", "Use 'o' to have no organization."};
+const string displayComputerInstructions[5] = {"Use 'b' to organize by if it was built or not",  "Use 'n' to organize by names in alphabetical order.",
+                                               "Use 'y' to organize by year it was built.", "Use 't' to organize by type.",
+                                               "Use 'o' to have no organization."};
 
 Console::Console() {
 
@@ -143,9 +146,9 @@ string Console::getString(string s, bool ignore) {
     return in;
 }
 
-//type = 0 checks for basic commands, type = 1 checks for display organization commands
+//type = 0 checks for basic commands, type = 1 / 2 checks for display organization commands (1 = persons, 2 = computers)
 int Console::getIndex(char c, int type) {
-    for(int i = type * 9; i < (type == 0 ? 9 : 14); i++) {
+    for(int i = type * 9 - (type == 2 ? 4 : 0); i < (type == 0 ? 9 : ((type - 1) * 5 + 14)); i++) {
         if(c == commands[i]) {
             return i;
         }
@@ -165,21 +168,20 @@ int Console::getInstruction(int type) {
             break;
         }
     }
-    return i - (type == 1 ? 9 : 0);
+    return i - (type >= 1 ? ((type - 1) * 5 + 9) : 0);
 }
 
 void Console::process() {
     //char pc;
     time_t t = time(NULL);
     tm* tPtr = localtime(&t);
-    int currentYear = tPtr -> tm_year + 1900;
+    int currentYear = tPtr -> tm_year + 1900; // gets the year
     println("The year is "+to_string(currentYear)+" and you're on Earth.");
 
     PersonManager pm = PersonManager(currentYear);
     printInstructions();
     while(true) {
         int i = getInstruction(0);
-        newLine();
         if(i == 0) { // display
             if(getBool("Persons or computers", 'p', 'c')) {
                 printDisplayInstructions(0);

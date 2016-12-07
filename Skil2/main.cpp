@@ -1,5 +1,4 @@
 #include <string>
-
 #include "console.h"
 
 using namespace std;

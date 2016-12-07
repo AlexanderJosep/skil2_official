@@ -16,8 +16,8 @@ public:
     Storage(string dbName);
     vector<Person> getPersons(); // loads persons from an sql database
     bool savePerson(Person &person); // saves a person to a sql database
-    bool editPerson(Person &person, int index); // edits a person in a sql database
-    bool removePerson(int index); // removes a person from a sql database
+    bool editPerson(Person &person, string name, short gender, short birthYear, short deathYear); // edits a person in a sql database
+    bool removePerson(Person &person); // removes a person from a sql database
 
 private:
     string dbName;

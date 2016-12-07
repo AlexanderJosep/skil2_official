@@ -31,20 +31,26 @@ bool Storage::savePerson(Person &person) {
     return query.exec();
 }
 
-bool Storage::editPerson(Person &person, int index) {
+bool Storage::editPerson(Person &person, string name, short gender, short birthYear, short deathYear) {
     QSqlQuery query(database);
-    query.prepare("UPDATE persons SET name='"+QString::fromStdString(person.getName())+"',gender=?,birth_year=?,death_year=? WHERE id = ?");
+    query.prepare("UPDATE persons SET name='"+QString::fromStdString(person.getName())+"',gender=?,birth_year=?,death_year=? WHERE name='"+QString::fromStdString(name)+"' AND gender=? AND birth_year=? AND death_year=? LIMIT 1");
     query.addBindValue(QString::fromStdString(to_string(person.getGender())));
     query.addBindValue(QString::fromStdString(to_string(person.getBirthYear())));
     query.addBindValue(QString::fromStdString(to_string(person.getDeathYear())));
-    query.addBindValue(QString::fromStdString(to_string(index)));
+
+    query.addBindValue(QString::fromStdString(to_string(gender)));
+    query.addBindValue(QString::fromStdString(to_string(birthYear)));
+    query.addBindValue(QString::fromStdString(to_string(deathYear)));
     return query.exec();
 }
 
-bool Storage::removePerson(int index) {
+bool Storage::removePerson(Person &person) {
     QSqlQuery query(database);
-    query.prepare("DELETE FROM persons WHERE id = ?");
-    query.addBindValue(QString::fromStdString(to_string(index)));
+    query.prepare("DELETE FROM persons WHERE name='"+QString::fromStdString(person.getName())+"' AND gender=? AND "
+                  "birth_year=? AND death_year=?");
+    query.addBindValue(QString::fromStdString(to_string(person.getGender())));
+    query.addBindValue(QString::fromStdString(to_string(person.getBirthYear())));
+    query.addBindValue(QString::fromStdString(to_string(person.getDeathYear())));
     return query.exec();
 }
 
