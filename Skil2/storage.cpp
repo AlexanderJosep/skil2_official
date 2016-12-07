@@ -33,25 +33,36 @@ bool Storage::savePerson(Person &person) {
 
 bool Storage::editPerson(Person &person, string name, short gender, short birthYear, short deathYear) {
     QSqlQuery query(database);
-    query.prepare("UPDATE persons SET name='"+QString::fromStdString(person.getName())+"',gender=?,birth_year=?,death_year=? WHERE name='"+QString::fromStdString(name)+"' AND gender=? AND birth_year=? AND death_year=? LIMIT 1");
-    query.addBindValue(QString::fromStdString(to_string(person.getGender())));
-    query.addBindValue(QString::fromStdString(to_string(person.getBirthYear())));
-    query.addBindValue(QString::fromStdString(to_string(person.getDeathYear())));
-
+    query.prepare("SELECT * FROM persons WHERE name='"+QString::fromStdString(name)+"' AND gender=? AND "
+                  "birth_year=? AND death_year=?");
     query.addBindValue(QString::fromStdString(to_string(gender)));
     query.addBindValue(QString::fromStdString(to_string(birthYear)));
     query.addBindValue(QString::fromStdString(to_string(deathYear)));
-    return query.exec();
+    query.exec();
+
+    while(query.next()) { // so it edits only one if there are multiple persons
+        query.prepare("UPDATE persons SET name='"+QString::fromStdString(person.getName())+"',gender=?,birth_year=?,death_year=? WHERE id = "+QString::fromStdString(to_string(query.value("id").toUInt())));
+        query.addBindValue(QString::fromStdString(to_string(person.getGender())));
+        query.addBindValue(QString::fromStdString(to_string(person.getBirthYear())));
+        query.addBindValue(QString::fromStdString(to_string(person.getDeathYear())));
+        return  query.exec();
+    }
+    return false;
 }
 
 bool Storage::removePerson(Person &person) {
     QSqlQuery query(database);
-    query.prepare("DELETE FROM persons WHERE name='"+QString::fromStdString(person.getName())+"' AND gender=? AND "
+    query.prepare("SELECT * FROM persons WHERE name='"+QString::fromStdString(person.getName())+"' AND gender=? AND "
                   "birth_year=? AND death_year=?");
     query.addBindValue(QString::fromStdString(to_string(person.getGender())));
     query.addBindValue(QString::fromStdString(to_string(person.getBirthYear())));
     query.addBindValue(QString::fromStdString(to_string(person.getDeathYear())));
-    return query.exec();
+
+    query.exec();
+    while(query.next()) { // so it deletes only 1 if there are multiple people with the same details
+        return query.exec("DELETE FROM persons WHERE id = "+QString::fromStdString(to_string(query.value("id").toUInt())));
+    }
+    return false;
 }
 
 
