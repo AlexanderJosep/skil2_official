@@ -222,8 +222,7 @@ void Console::process() {
             pm.remove(*this, persons);
         }
         if(i == 8) { // snake
-            Snake snake = Snake(*this);
-            snake.processSnake(*this);
+            Snake(*this);
         }
     }
 }
