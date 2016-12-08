@@ -28,8 +28,8 @@ void EntityManager::add(Console &c, int type) {
     c.newLine();
 }
 
-void EntityManager::edit(Console &c, vector<Person> pList) {
-    short index = getRealIndex(pList, getListIndex(c));
+void EntityManager::edit(Console &c, vector<Entity*> list, int type) {
+    short index = getRealIndex(list, getListIndex(c));
     string oldName = persons[index].getName();
     c.println("Old name: "+oldName);
     string name = getName(c, false);
@@ -55,8 +55,8 @@ void EntityManager::edit(Console &c, vector<Person> pList) {
     }
 }
 
-void EntityManager::remove(Console &c, vector<Person> pList) {
-    short index = getRealIndex(pList, getListIndex(c));
+void EntityManager::remove(Console &c, vector<Entity*> list, int type) {
+    short index = getRealIndex(list, getListIndex(c));
     string name = persons[index].getName();
     if(c.getBool("Are you sure you want to delete "+name, 'y', 'n')) {
         if(storage.removePerson(persons[index])) {
@@ -81,11 +81,11 @@ short EntityManager::getRealIndex(vector<Person> pList, int index) {
     return index;
 }
 
-short EntityManager::getListIndex(Console &c) {
+short EntityManager::getListIndex(Console &c, int type) {
     short index;
     while (true){
-        index = c.getShort("Select index from the list (1-"+to_string(persons.size())+")");
-        if(index > 0 && index <= (signed) persons.size()) {
+        index = c.getShort("Select index from the list (1-"+to_string(type == PERSON ? persons.size() : computers.size())+")");
+        if(index > 0 && index <= (signed) (type == PERSON ? persons.size() : computers.size())) {
             break;
         }
         c.println("Invalid index!");
@@ -248,8 +248,8 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
     }
     if(((o == 3 || o == 4) && type == PERSON) || (o == 2 && type == COMPUTER)) { // organize by birth year or by death year or by built year
         vector<int> years;
-        vector<Person> copyPersons;
-        vector<Computer> copyComputers;
+        vector<Person*> copyPersons;
+        vector<Computer*> copyComputers;
         if(type == PERSON) {
             for(unsigned int i = 0; i < persons.size(); i++) {
                 if((o == 3 && persons[i].getBirthYear() >= 0) || (o == 4 && persons[i].getDeathYear() >= 0)) {
@@ -266,27 +266,27 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
         sort(years.begin(), years.end());
         if(type == PERSON) {
             for(unsigned int i = 0; i < persons.size(); i++) {
-                copyPersons.push_back(persons[i]);
+                copyPersons.push_back(&persons[i]);
             }
         } else {
             for(unsigned int i = 0; i < computers.size(); i++) {
-                copyComputers.push_back(computers[i]);
+                copyComputers.push_back(&computers[i]);
             }
         }
 
         for(unsigned int i = 0; i < years.size(); i++) {
             if(type == PERSON) {
                 for(unsigned int j = 0; j < copyPersons.size(); j++) {
-                    if((o == 3 && years[i] == copyPersons[j].getBirthYear()) || (o == 4 && years[i] == copyPersons[j].getDeathYear())) {
-                        out.push_back(&copyPersons[j]);
+                    if((o == 3 && years[i] == copyPersons[j] -> getBirthYear()) || (o == 4 && years[i] == copyPersons[j] -> getDeathYear())) {
+                        out.push_back(copyPersons[j]);
                         copyPersons.erase(copyPersons.begin() + j);
                         break;
                     }
                 }
             } else {
                 for(unsigned int j = 0; j < copyComputers.size(); j++) {
-                    if(years[i] == copyComputers[j].getYear()) {
-                        out.push_back(&copyComputers[j]);
+                    if(years[i] == copyComputers[j] -> getYear()) {
+                        out.push_back(copyComputers[j]);
                         copyComputers.erase(copyComputers.begin() + j);
                         break;
                     }
@@ -295,12 +295,12 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
         }
         if(o == 4) {
             for(unsigned int j = 0; j < copyPersons.size(); j++) {
-                 out.push_back(&copyPersons[j]);
+                 out.push_back(copyPersons[j]);
             }
         }
         if(type == COMPUTER) {
             for(unsigned int j = 0; j < copyComputers.size(); j++) {
-                 out.push_back(&copyComputers[j]);
+                 out.push_back(copyComputers[j]);
             }
         }
     }
@@ -360,16 +360,45 @@ string EntityManager::toLowerCase(string s) {
     return out;
 }
 
-vector<Person> EntityManager::getPersonSearchResults(Console &c) {
+vector<Entity*> EntityManager::getSearchResults(Console &c, int type) {
+    if(type == PERSON) {
+        c.println("You can search for 'male' or 'female' to get gender results.");
+    } else {
+        c.println("You can search for 'built' or 'not built' to get built or not built results.");
+    }
     string search = toLowerCase(c.getString("Search", true));
-    vector<Person> out;
-    string male = "male";
-    string female = "female";
-    for(Person p : persons) {
-        if(toLowerCase(p.getName()).find(search) != string::npos || to_string(p.getBirthYear()).find(search) != string::npos
-                || (p.getGender() == 0 && male.find(search) != string::npos) || (search != male && p.getGender() == 1 && female.find(search) != string::npos)
-                || (p.getDeathYear() >= 0 && to_string(p.getDeathYear()).find(search) != string::npos)) {
-           out.push_back(p);
+    vector<Entity*> out;
+    if(type == PERSON) {
+        string male = "male";
+        string female = "female";
+        for(int i = 0; i < persons.size(); i++) {
+            if(toLowerCase(persons[i].getName()).find(search) != string::npos || to_string(persons[i].getBirthYear()).find(search) != string::npos
+                    || (persons[i].getGender() == 0 && male.find(search) != string::npos) || (search != male && persons[i].getGender() == 1 && female.find(search) != string::npos)
+                    || (persons[i].getDeathYear() >= 0 && to_string(persons[i].getDeathYear()).find(search) != string::npos)) {
+               out.push_back(&persons[i]);
+            }
+        }
+    } else {
+        string built = "built";
+        string notBuilt = "not built";
+        for(int j = 0; j < computers.size(); j++) {
+            bool added = false;
+            for(int i = 0; i < NUMBER_OF_MACHINES_TYPES; i++) {
+                if(computers[j].getType() == i) {
+                    if(toLowerCase(MACHINE_TYPES[i]).find(search) != string::npos) {
+                        out.push_back(&computers[j]);
+                        added = true;
+                    }
+                    break;
+                }
+            }
+            if(added) {
+                continue;
+            }
+            if(toLowerCase(computers[j].getName()).find(search) != string::npos || (computers[j].getYear() && to_string(computers[j].getYear()).find(search) != string::npos)
+                    || (computers[j].getYear() >= 0 && built.find(search) != string::npos) || (search != built && computers[j].getYear() < 0 && notBuilt.find(search) != string::npos)) {
+               out.push_back(&computers[j]);
+            }
         }
     }
     return out;

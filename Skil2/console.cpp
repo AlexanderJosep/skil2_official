@@ -28,18 +28,18 @@ void Console::clearBuffer() {
 }
 
 void Console::printInstructions() {
-    for(int i = 0; i < 9; i++) {
+    for(int i = 0; i < INSTRUCTIONS_LENGTH; i++) {
         println(INSTRUCTIONS[i]);
     }
 }
 
 void Console::printDisplayInstructions(int type) {
-    if(type == 0) {
-        for(int i = 0; i < 5; i++) {
+    if(type == PERSON) {
+        for(int i = 0; i < DISPLAY_PERSON_INSTRUCTIONS_LENGTH; i++) {
             println(DISPLAY_PERSON_INSTRUCTIONS[i]);
         }
     } else {
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < DISPLAY_COMPUTER_INSTRUCTIONS_LENGTH; i++) {
             println(DISPLAY_COMPUTER_INSTRUCTIONS[i]);
         }
     }
@@ -173,7 +173,8 @@ void Console::process() {
             printEntities(manager.getOrganizedEntities(o, type), rev, false);
         }
         if(i == 1) { // search
-          //  printPersons(pm.getSearchResults(*this), false, false);
+            int type = !getBool("Persons or computers", 'p', 'c');
+            printEntities(manager.getSearchResults(*this, type), false, false);
         }
         if(i == 2) { // add person
             manager.add(*this, !getBool("Person or computer", 'p', 'c'));
@@ -191,21 +192,21 @@ void Console::process() {
                 system("clear");
             #endif
         }
-        if(i == 6) { // edit person
-           // vector<Person> persons = pm.getOrganizedPersons(1); // organized in alphabetical order
-            //printPersons(persons, false, true); // alphabetical organization
-            //pm.edit(*this, persons);
-        }
-        if(i == 7) { // remove person
-            //vector<Person> persons = pm.getOrganizedPersons(1); // organized in alphabetical order
-           // printPersons(persons, false, true); // alphabetical organization
-           // pm.remove(*this, persons);
+        if(i == 6 || i == 7) {
+            int type = !getBool("Persons or computers", 'p', 'c');
+            vector<Entity*> entities = manager.getOrganizedEntities(1, type); // organized in alphabetical order
+            printEntities(entities, false, true); // alphabetical organization
+            if(i == 6) { // edit person
+                manager.edit(*this, entities, type);
+            } else { // remove person
+                manager.remove(*this, entities, type);
+            }
         }
         if(i == 8) { // snake
             Snake(*this);
         }
         if(i != 3 && i != 5) {
-            cout << "Press 'i' for instructions." << endl;
+            println("Press 'i' for instructions.");
         }
     }
 }

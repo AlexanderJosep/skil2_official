@@ -14,11 +14,10 @@ class EntityManager {
 public:
     EntityManager(int currentYear);
     void add(Console &c, int type);
-    void edit(Console &c, vector<Person> pList); // edits a person in the persons list
-    void remove(Console &c, vector<Person> pList); // remove a person from the persons list
+    void edit(Console &c, vector<Entity*> list, int type); // edits a entity in a list
+    void remove(Console &c, vector<Entity*> list, int type); // remove a entity from a list
     vector<Entity*> getOrganizedEntities(int o, int type); // gets organized entity list which organizes by type o
-    vector<Person> getPersonSearchResults(Console &c); // gets a search input and find the results according to that (persons)
-    vector<Computer> getComputerSearchResults(Console &c); // gets a search input and find the results according to that (computers
+    vector<Entity*> getSearchResults(Console &c, int type); // gets a search input and find the results according to that
 private:
     short getListIndex(Console &c); // select a index from a list
     short getRealIndex(vector<Person> pList, int index); // get the actual index ; the old one was organized in some way
