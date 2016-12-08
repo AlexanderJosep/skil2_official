@@ -14,28 +14,28 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     person.cpp \
-    personmanager.cpp \
     console.cpp \
     storage.cpp \
     snake.cpp \
     snakegrid.cpp \
     computer.cpp \
-    computermanager.cpp \
     snakewidget.cpp \
-    snakethread.cpp
+    snakethread.cpp \
+    entity.cpp \
+    entitymanager.cpp
 
 HEADERS += \
     person.h \
-    personmanager.h \
     console.h \
     storage.h \
     snake.h \
     snakegrid.h \
     computer.h \
-    computermanager.h \
     snakewidget.h \
     snakethread.h \
-    config.h
+    config.h \
+    entity.h \
+    entitymanager.h
 
 DISTFILES += \
     persons.txt

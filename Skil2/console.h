@@ -6,11 +6,13 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include "config.h"
 #include "person.h"
+#include "entity.h"
 
-using namespace std;
+using namespace config;
 
-class Console {
+class Console  {
 public:
     Console();
     void addW(int w); // prints setw(w) to the console
@@ -20,7 +22,7 @@ public:
     void printInstructions(); // prints all basic command instructions
     void printDisplayInstructions(int type); // prints all display organization instructions
     void printColumns(bool includeIndex); // print all columns
-    void printPersons(vector<Person> persons, bool reverse, bool includeIndex); // print all persons and reverses the output if reverse is true
+    void printEntities(vector<Entity*> entities, bool reverse, bool includeIndex); // print all entities and reverses the output if reverse is true
     void clearBuffer(); // clears the stream buffer until it reaches \n
     char getChar(string s); // gets user input char
     short getShort(string s); // gets user input short

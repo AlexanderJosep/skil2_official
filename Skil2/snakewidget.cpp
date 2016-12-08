@@ -71,11 +71,11 @@ void SnakeWidget::paintEvent(QPaintEvent *event) {
     painter.end();
 }
 
-void SnakeWidget::mousePressEvent(QMouseEvent * event) {
+void SnakeWidget::mousePressEvent(QMouseEvent *event) {
     setFocus();
 }
 
-void SnakeWidget::keyPressEvent(QKeyEvent* event){
+void SnakeWidget::keyPressEvent(QKeyEvent *event){
     if(!started) {
         started = true;
         status = "Eat the candies.";

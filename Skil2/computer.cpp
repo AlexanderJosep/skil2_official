@@ -1,54 +1,34 @@
 #include "computer.h"
-#include <string>
 
-Computer::Computer(string name, short year, short computerType, bool built) {
+Computer::Computer(string name, short year, short type) {
     this -> name = name;
     this -> year = year;
-    this -> computerType = computerType;
-    this -> built = built;
-}
-
-string Computer::getName() {
-    return name;
+    this -> type = type;
 }
 
 short Computer::getYear() {
     return year;
 }
 
-short Computer::getComputerType() {
-    return computerType;
+short Computer::getType() {
+    return type;
 }
 
-short Computer::getBuilt() {
-    return built;
-}
-
-void Computer::setData(string name, short year, short computerType, bool built) {
+void Computer::setData(string name, short year, short type) {
     this -> name = name;
     this -> year = year;
-    this -> computerType = computerType;
-    this -> built = built;
+    this -> type = type;
 }
 
 string Computer::getOutput() {
     ostringstream out;
-    string b = (built == 0 ? "Not built" : "Built");
+  //  string b = (built == 0 ? "Not built" : "Built");
     int priorLength  = 0;
-    updateString(out, "" + name, priorLength, 0);
-    updateString(out, "" + b, priorLength, 28);
-    updateString(out, "" + to_string(computerType), priorLength, 12);
-    if(built >= 0) {
-        updateString(out, "" + to_string(built), priorLength, 16);
-    }
+  //  updateString(out, "" + name, priorLength, 0);
+  //  updateString(out, "" + b, priorLength, 28);
+  //  updateString(out, "" + to_string(type), priorLength, 12);
+   // if(built >= 0) {
+   //     updateString(out, "" + to_string(built), priorLength, 16);
+   // }
     return out.str();
 }
-
-void Computer::updateString(ostringstream &o, string data, int &priorLength, int columnSize) {
-    if(o.tellp() > 0 && priorLength < 30) {
-        o << setw(columnSize - (priorLength - data.length()));
-    }
-    o << data;
-    priorLength = data.length();
-}
-

@@ -7,10 +7,6 @@ Person::Person(string name, short gender, short birthYear, short deathYear) {
     this -> deathYear = deathYear;
 }
 
-string Person::getName() {
-    return name;
-}
-
 short Person::getGender() {
     return gender;
 }
@@ -38,16 +34,6 @@ string Person::getOutput() {
     updateString(out, "" + name, priorLength, 0);
     updateString(out, "" + s, priorLength, 28);
     updateString(out, "" + to_string(birthYear), priorLength, 12);
-    if(deathYear >= 0) {
-        updateString(out, "" + to_string(deathYear), priorLength, 16);
-    }
+    updateString(out, "" + (deathYear >= 0 ? to_string(deathYear) : "Not dead"), priorLength, 16);
     return out.str();
-}
-
-void Person::updateString(ostringstream &o, string data, int &priorLength, int columnSize) {
-    if(o.tellp() > 0 && priorLength < 30) {
-        o << setw(columnSize - (priorLength - data.length()));
-    }
-    o << data;
-    priorLength = data.length();
 }

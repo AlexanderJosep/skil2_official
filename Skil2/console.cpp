@@ -1,22 +1,6 @@
 #include "console.h"
-#include "personmanager.h"
+#include "entitymanager.h"
 #include "snake.h"
-
-// display, search, add, info, quit, clear console, edit, remove
-// no organization, org. names in alphabetical order, org. by gender, org. by birth year, org. by death year
-// by built or not, alphabetical, year built, type, no org.
-const char commands[19] = {'d', 's', 'a', 'i', 'q', 'c', 'e', 'r', 'g',
-                           'o', 'n', 'g', 'b', 'd',
-                           'b', 'n', 'y', 't', 'o'};
-const string instructions[9] = {"Use 'a' to add computer or person to the list.", "Use 'c' to clear the console.", "Use 'd' to display a list.",
-                                "Use 'e' to edit a list.","Use 'g' to start a game of snake.",
-                                 "Use 'r' to remove from a list.",
-                                "Use 's' to search.", "Use 'q' if you want to quit."};
-const string displayPersonInstructions[5] = {"Use 'b' to organize by birth year." ,"Use 'd' to organize by death year." ,"Use 'g' to organize by gender.",
-                                       "Use 'n' to organize by names in alphabetical order." ,"Use 'o' to have no organization."};
-const string displayComputerInstructions[5] = {"Use 'b' to organize by if it was built or not",  "Use 'n' to organize by names in alphabetical order.",
-                                               "Use 'y' to organize by year it was built.", "Use 't' to organize by type.",
-                                               "Use 'o' to have no organization."};
 
 Console::Console() {
 
@@ -45,18 +29,18 @@ void Console::clearBuffer() {
 
 void Console::printInstructions() {
     for(int i = 0; i < 9; i++) {
-        println(instructions[i]);
+        println(INSTRUCTIONS[i]);
     }
 }
 
 void Console::printDisplayInstructions(int type) {
     if(type == 0) {
         for(int i = 0; i < 5; i++) {
-            println(displayPersonInstructions[i]);
+            println(DISPLAY_PERSON_INSTRUCTIONS[i]);
         }
     } else {
         for(int i = 0; i < 5; i++) {
-            println(displayComputerInstructions[i]);
+            println(DISPLAY_COMPUTER_INSTRUCTIONS[i]);
         }
     }
 }
@@ -81,14 +65,14 @@ void Console::printColumns(bool includeIndex) {
     newLine();
 }
 
-void Console::printPersons(vector<Person> persons, bool reverse, bool includeIndex) {
-    if(persons.size() <= 0) {
-        println("No persons to display.");
+void Console::printEntities(vector<Entity*> entities, bool reverse, bool includeIndex) {
+    if(entities.size() <= 0) {
+        println("Nothing to display.");
         return;
     }
     newLine();
     printColumns(includeIndex);
-    for(unsigned int i = (reverse ? persons.size() - 1 : 0); i < persons.size(); i += (reverse ? -1 : 1)) {
+    for(unsigned int i = (reverse ? entities.size() - 1 : 0); i < entities.size(); i += (reverse ? -1 : 1)) {
         if(includeIndex) {
             string s = to_string(i + 1);
             print(s);
@@ -96,7 +80,7 @@ void Console::printPersons(vector<Person> persons, bool reverse, bool includeInd
                 print(" ");
             }
         }
-        println(persons[i].getOutput());
+        println(entities[i] -> getOutput());
     }
     newLine();
 }
@@ -149,7 +133,7 @@ string Console::getString(string s, bool ignore) {
 //type = 0 checks for basic commands, type = 1 / 2 checks for display organization commands (1 = persons, 2 = computers)
 int Console::getIndex(char c, int type) {
     for(int i = type * 9 - (type == 2 ? 4 : 0); i < (type == 0 ? 9 : ((type - 1) * 5 + 14)); i++) {
-        if(c == commands[i]) {
+        if(c == COMMANDS[i]) {
             return i;
         }
     }
@@ -172,58 +156,28 @@ int Console::getInstruction(int type) {
 }
 
 void Console::process() {
-    //char pc;
     time_t t = time(NULL);
     tm* tPtr = localtime(&t);
     int currentYear = tPtr -> tm_year + 1900; // gets the year
     println("The year is "+to_string(currentYear)+" and you're on Earth.");
 
-    PersonManager pm = PersonManager(currentYear);
+    EntityManager manager = EntityManager(currentYear);
     printInstructions();
     while(true) {
         int i = getInstruction(0);
         if(i == 0) { // display
-            if(getBool("Persons or computers", 'p', 'c')) {
-                printDisplayInstructions(0);
-                int o = getInstruction(1);
-                bool rev = getBool("Reverse output", 'y', 'n');
-                printPersons(pm.getOrganizedPersons(o), rev, false);
-            } else {
-                printDisplayInstructions(1);
-
-                bool rev = getBool("Reverse output", 'y', 'n');
-            }
+            int type = !getBool("Persons or computers", 'p', 'c');
+            printDisplayInstructions(type);
+            int o = getInstruction(1 + type);
+            bool rev = getBool("Reverse output", 'y', 'n');
+            printEntities(manager.getOrganizedEntities(o, type), rev, false);
         }
         if(i == 1) { // search
-            printPersons(pm.getSearchResults(*this), false, false);
+          //  printPersons(pm.getSearchResults(*this), false, false);
         }
         if(i == 2) { // add person
-                    char c;
-
-                    cout << "Person or computer? (p/c): ";
-                    cin >> c;
-
-                    if (c == 'c'){
-                        string name;
-                        short year;
-                        string type;
-                        char b;
-
-
-                        cout << "Name: ";
-                        cin >> name;
-                        cout << "Year: ";
-                        cin >> year;
-                        cout << "Computer type: ";
-                        cin >> type;
-                        cout << "Was it built? (y/n): ";
-                        cin >> b;
-
-
-                    } else if(c == 'p'){
-                        pm.add(*this);
-                    }
-                }
+            manager.add(*this, !getBool("Person or computer", 'p', 'c'));
+        }
         if(i == 3) { // info
             printInstructions();
         }
@@ -233,21 +187,19 @@ void Console::process() {
         if(i == 5) { // clear console
             #ifdef _WIN32
                 system("cls");
-                printInstructions();
             #else
                 system("clear");
-                printInstructions();
             #endif
         }
         if(i == 6) { // edit person
-            vector<Person> persons = pm.getOrganizedPersons(1); // organized in alphabetical order
-            printPersons(persons, false, true); // alphabetical organization
-            pm.edit(*this, persons);
+           // vector<Person> persons = pm.getOrganizedPersons(1); // organized in alphabetical order
+            //printPersons(persons, false, true); // alphabetical organization
+            //pm.edit(*this, persons);
         }
         if(i == 7) { // remove person
-            vector<Person> persons = pm.getOrganizedPersons(1); // organized in alphabetical order
-            printPersons(persons, false, true); // alphabetical organization
-            pm.remove(*this, persons);
+            //vector<Person> persons = pm.getOrganizedPersons(1); // organized in alphabetical order
+           // printPersons(persons, false, true); // alphabetical organization
+           // pm.remove(*this, persons);
         }
         if(i == 8) { // snake
             Snake(*this);
