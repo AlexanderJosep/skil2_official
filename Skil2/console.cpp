@@ -252,7 +252,7 @@ void Console::process() {
         if(i == 8) { // snake
             Snake(*this);
         }
-        if (i != 3 && i != 5) {
+        if(i != 3 && i != 5) {
             cout << "Press 'i' for instructions." << endl;
         }
     }
