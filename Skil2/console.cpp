@@ -233,8 +233,10 @@ void Console::process() {
         if(i == 5) { // clear console
             #ifdef _WIN32
                 system("cls");
+                printInstructions();
             #else
                 system("clear");
+                printInstructions();
             #endif
         }
         if(i == 6) { // edit person
@@ -250,6 +252,8 @@ void Console::process() {
         if(i == 8) { // snake
             Snake(*this);
         }
-        printInstructions();
+        if (i != 3 && i != 5) {
+            cout << "Press 'i' for instructions." << endl;
+        }
     }
 }
