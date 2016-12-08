@@ -10,7 +10,7 @@ const char commands[19] = {'d', 's', 'a', 'i', 'q', 'c', 'e', 'r', 'g',
                            'b', 'n', 'y', 't', 'o'};
 const string instructions[9] = {"Use 'a' to add computer or person to the list.", "Use 'c' to clear the console.", "Use 'd' to display a list.",
                                 "Use 'e' to edit a list.","Use 'g' to start a game of snake.",
-                                "Use 'i' to display info on instructions.", "Use 'r' to remove from a list.",
+                                 "Use 'r' to remove from a list.",
                                 "Use 's' to search.", "Use 'q' if you want to quit."};
 const string displayPersonInstructions[5] = {"Use 'b' to organize by birth year." ,"Use 'd' to organize by death year." ,"Use 'g' to organize by gender.",
                                        "Use 'n' to organize by names in alphabetical order." ,"Use 'o' to have no organization."};
@@ -250,5 +250,6 @@ void Console::process() {
         if(i == 8) { // snake
             Snake(*this);
         }
+        printInstructions();
     }
 }
