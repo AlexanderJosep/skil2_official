@@ -40,7 +40,7 @@ short Snake::getGridSize(Console &c, string s) {
         cout << s;
         cin >> in;
         if(in < 10 || in > 30) {
-            c.println("Please select a grid size between 3 - 50.");
+            c.println("Please select a grid size between 10 - 30.");
             c.clearBuffer();
             continue;
         }
