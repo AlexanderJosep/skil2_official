@@ -198,8 +198,32 @@ void Console::process() {
             printPersons(pm.getSearchResults(*this), false, false);
         }
         if(i == 2) { // add person
-            pm.add(*this);
-        }
+                    char c;
+
+                    cout << "Person or computer? (p/c): ";
+                    cin >> c;
+
+                    if (c == 'c'){
+                        string name;
+                        short year;
+                        string type;
+                        char b;
+
+
+                        cout << "Name: ";
+                        cin >> name;
+                        cout << "Year: ";
+                        cin >> year;
+                        cout << "Computer type: ";
+                        cin >> type;
+                        cout << "Was it built? (y/n): ";
+                        cin >> b;
+
+
+                    } else if(c == 'p'){
+                        pm.add(*this);
+                    }
+                }
         if(i == 3) { // info
             printInstructions();
         }
