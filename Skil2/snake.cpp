@@ -31,8 +31,6 @@ Snake::Snake(Console &c) {
     thread -> start();
 
     application.exec();
-
-    c.newLine();
 }
 
 int Snake::getPoints() {
