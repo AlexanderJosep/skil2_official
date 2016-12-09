@@ -27,6 +27,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent * event );
 private:
+    QPainter painter;
     SnakeGrid *gridObject;
     short **grid;
     bool started;

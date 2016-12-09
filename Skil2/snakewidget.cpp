@@ -22,9 +22,9 @@ bool SnakeWidget::hasStarted() {
 }
 
 void SnakeWidget::paintEvent(QPaintEvent *event) {
-    QPainter painter;
     painter.begin(this);
     painter.setRenderHint(QPainter::Antialiasing);
+
     //snake text
     QFont font(QFont("times", 14));
     painter.setFont(font);

@@ -32,6 +32,7 @@ Snake::Snake(Console &c) {
 
     application.exec();
 
+    c.newLine();
 }
 
 short Snake::getGridSize(Console &c, string s) {
