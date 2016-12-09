@@ -13,6 +13,7 @@ using namespace config;
 class EntityManager {
 public:
     EntityManager(int currentYear);
+    void end(); // tell storage to close it's connection with the sql database
     void add(Console &c, int type);
     void edit(Console &c, vector<Entity*> entities, int type); // edits a entity in a list
     void remove(Console &c, vector<Entity*> entities, int type); // remove a entity from a list

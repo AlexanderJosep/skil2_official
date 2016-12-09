@@ -116,3 +116,9 @@ bool Storage::removeComputer(Computer &computer) {
     }
     return false;
 }
+
+void Storage::close() {
+    if(database.open()) {
+        database.close(); // close the sql database connection
+    }
+}

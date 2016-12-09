@@ -23,6 +23,7 @@ public:
     bool editComputer(Computer &computer, string name, short birthYear, short type); // edits a computer in a sql database
     bool removePerson(Person &person); // removes a person from a sql database
     bool removeComputer(Computer &computer); // removes a computer from a sql database
+    void close();
 
 private:
     string dbName;

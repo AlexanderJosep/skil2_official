@@ -6,6 +6,10 @@ EntityManager::EntityManager(int currentYear) {
     this -> computers = storage.getComputers();
 }
 
+void EntityManager::end() {
+    storage.close();
+}
+
 void EntityManager::add(Console &c, int type) {
     string name = getName(c, true, type);
     if(type == PERSON) {
@@ -47,7 +51,7 @@ void EntityManager::edit(Console &c, vector<Entity*> entities, int type) {
         short gender = getGender(c, false);
         short oldBirthYear = persons[index].getBirthYear();
         c.println("Old birth year: "+to_string(oldBirthYear));
-        short birthYear = getYear(c, "Year built");
+        short birthYear = getYear(c, "Birth year");
         short oldDeathYear = persons[index].getDeathYear();
         if(oldDeathYear > 0) {
              c.println("Old death year: "+to_string(oldDeathYear));
@@ -55,7 +59,8 @@ void EntityManager::edit(Console &c, vector<Entity*> entities, int type) {
              c.println("Old person did not have a death year.");
         }
         short deathYear = getDeathYear(c, false, birthYear);
-        if(storage.editPerson(persons[index], oldName, oldGender, oldBirthYear, oldDeathYear)) {
+        Person person = Person(name, gender, birthYear, deathYear);
+        if(storage.editPerson(person, oldName, oldGender, oldBirthYear, oldDeathYear)) {
             persons[index].setData(name, gender, birthYear, deathYear);
             c.println("You have edited "+name+" (old name: "+oldName+").");
         } else {
@@ -75,13 +80,15 @@ void EntityManager::edit(Console &c, vector<Entity*> entities, int type) {
             c.println("Old year built: "+to_string(oldYear));
         }
         short yearBuilt = getYearBuilt(c, false);
-        if(storage.editComputer(computers[index], oldName, oldYear, oldType)) {
+        Computer computer = Computer(name, yearBuilt, type);
+        if(storage.editComputer(computer, oldName, oldYear, oldType)) {
             computers[index].setData(name, yearBuilt, type);
             c.println("You have edited "+name+" (old name: "+oldName+").");
         } else {
             c.println("You failed to edit "+name+" (old name: "+oldName+").");
         }
     }
+    c.newLine();
 }
 
 void EntityManager::remove(Console &c, vector<Entity*> entities, int type) {
@@ -115,6 +122,7 @@ void EntityManager::remove(Console &c, vector<Entity*> entities, int type) {
     } else {
         c.println("Cancelled.");
     }
+    c.newLine();
 }
 
 short EntityManager::getRealIndex(vector<Entity*> entities, int index, int type) {

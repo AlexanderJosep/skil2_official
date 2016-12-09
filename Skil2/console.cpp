@@ -166,7 +166,7 @@ string Console::getString(string s, bool ignore) {
 
 //type = 0 checks for basic commands, type = 1 / 2 checks for display organization commands (1 = persons, 2 = computers)
 int Console::getIndex(char c, int type) {
-    for(int i = type * 9 - (type == 2 ? 4 : 0); i < (type == 0 ? 9 : ((type - 1) * 5 + 14)); i++) {
+    for(int i = type * 9 - (type == 2 ? 4 : 0); i < (type == 0 ? 9 : ((type - 1) * 4 + 14)); i++) {
         if(c == COMMANDS[i]) {
             return i;
         }
@@ -205,6 +205,7 @@ void Console::process() {
         if(i == 0) { // display
             int type = !getBool("Persons or computers", 'p', 'c');
             printDisplayInstructions(type);
+            clearBuffer();
             int o = getInstruction(1 + type);
             bool rev = getBool("Reverse output", 'y', 'n');
             printEntities(manager.getOrganizedEntities(o, type), rev, false, type);
@@ -213,6 +214,7 @@ void Console::process() {
         if(i == 1) { // search
             int type = !getBool("Persons or computers", 'p', 'c');
             printEntities(manager.getSearchResults(*this, type), false, false, type);
+            ignoreNextClear();
         }
         if(i == 2) { // add person
             manager.add(*this, !getBool("Person or computer", 'p', 'c'));
@@ -221,6 +223,7 @@ void Console::process() {
             printInstructions();
         }
         if(i == 4) { // quit
+            manager.end();
             break;
         }
         if(i == 5) { // clear console
