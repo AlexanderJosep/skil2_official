@@ -371,8 +371,8 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
     if(o == 3 && type == COMPUTER) {
         for(int i = 0; i < NUMBER_OF_MACHINES_TYPES; i++) {
             for(unsigned int j = 0; j < computers.size(); j++) {
-                if(computers[i].getName() == MACHINE_TYPES[i]) {
-                    out.push_back(&computers[i]);
+                if(computers[j].getType() == i) {
+                    out.push_back(&computers[j]);
                 }
             }
         }

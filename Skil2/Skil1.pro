@@ -37,5 +37,4 @@ HEADERS += \
     entity.h \
     entitymanager.h
 
-DISTFILES += \
-    persons.txt
+DISTFILES +=
