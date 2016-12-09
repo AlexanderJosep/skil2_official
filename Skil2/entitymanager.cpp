@@ -578,7 +578,7 @@ void EntityManager::addSnakeScore(Console &c, int score, int grid) {
         c.println("No scores to display.");
     } else {
         int size = topTenScores.size() > 10 ? 10 : topTenScores.size();
-        c.println("Top "+to_string(size)+" players:");
+        c.println("Top "+to_string(size)+" players (grid size -> "+to_string(grid)+"):");
         c.println("  \tName:\tScore");
         for(unsigned int i = 0; i < topTenScores.size(); i++) {
             c.println(to_string(i + 1) + ".\t"+topTenScores[i].getName()+"\t"+to_string(topTenScores[i].getScore()));
