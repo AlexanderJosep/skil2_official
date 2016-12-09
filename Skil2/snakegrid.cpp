@@ -72,7 +72,7 @@ bool SnakeGrid::updateSnake(Console &, int dir) {
     int offX = dir == 0 ? -1 : (dir == 2 ? 1 : 0);
     int offY = dir == 1 ? -1 : (dir == 3 ? 1 : 0);
     for(unsigned int i = 1; i < snakeX.size(); i++) {
-        if(snakeX[0] + offX == snakeX[i] && snakeY[0] + offY == snakeY[i]) {
+        if(snakeX[0] + offX == snakeX[i] && snakeY[0] + offY == snakeY[i]) { // collided with itself
             return false;
         }
     }

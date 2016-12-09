@@ -98,7 +98,8 @@ void Console::printEntities(vector<Entity*> entities, bool reverse, bool include
 
 char Console::getChar(string s) {
     print(s + ": ");
-    return getchar();
+    int ch = getchar();
+    return ch;
 }
 
 short Console::getShort(string s) {
@@ -207,6 +208,7 @@ void Console::process() {
             int o = getInstruction(1 + type);
             bool rev = getBool("Reverse output", 'y', 'n');
             printEntities(manager.getOrganizedEntities(o, type), rev, false, type);
+
         }
         if(i == 1) { // search
             int type = !getBool("Persons or computers", 'p', 'c');
@@ -214,7 +216,6 @@ void Console::process() {
         }
         if(i == 2) { // add person
             manager.add(*this, !getBool("Person or computer", 'p', 'c'));
-            clearBuffer();
         }
         if(i == 3) { // info
             printInstructions();
@@ -228,6 +229,7 @@ void Console::process() {
             #else
                 system("clear");
             #endif
+            printInstructions();
         }
         if(i == 6 || i == 7) {
             int type = !getBool("Persons or computers", 'p', 'c');
@@ -245,5 +247,6 @@ void Console::process() {
         if(i != 3 && i != 5) {
             println("Press 'i' for instructions.");
         }
+        clearBuffer();
     }
 }
