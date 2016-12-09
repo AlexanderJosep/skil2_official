@@ -1,9 +1,8 @@
-# skil1_official
-Skil 1
-
+# skil2_official
+Skil 2
 Features:
-- Add persons
-- Remove persons
-- Edit persons
-- Store persons
-- Snake!
+- Add persons/computers/connections
+- Remove persons/computers/connections
+- Edit persons/computers
+- Store persons/computers/connections
+- Graphical snake with hiscores!
