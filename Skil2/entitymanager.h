@@ -14,13 +14,13 @@ class EntityManager {
 public:
     EntityManager(int currentYear);
     void add(Console &c, int type);
-    void edit(Console &c, vector<Entity*> list, int type); // edits a entity in a list
-    void remove(Console &c, vector<Entity*> list, int type); // remove a entity from a list
+    void edit(Console &c, vector<Entity*> entities, int type); // edits a entity in a list
+    void remove(Console &c, vector<Entity*> entities, int type); // remove a entity from a list
     vector<Entity*> getOrganizedEntities(int o, int type); // gets organized entity list which organizes by type o
     vector<Entity*> getSearchResults(Console &c, int type); // gets a search input and find the results according to that
 private:
-    short getListIndex(Console &c); // select a index from a list
-    short getRealIndex(vector<Person> pList, int index); // get the actual index ; the old one was organized in some way
+    short getListIndex(Console &c, int type); // select a index from a list
+    short getRealIndex(vector<Entity*> entities, int index, int type); // get the actual index ; the old one was organized in some way
     string getName(Console &c, bool n); // gets the name from user input, n is true if user is creating a new person, false if editing
     short getGender(Console &c, bool n); // gets the gender from user input, n is true if user is creating a new person, false if editing
     short getYear(Console &c, string s); // gets a year from user input

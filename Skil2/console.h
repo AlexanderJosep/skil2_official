@@ -21,8 +21,8 @@ public:
     void newLine(); // prints \n to the console
     void printInstructions(); // prints all basic command instructions
     void printDisplayInstructions(int type); // prints all display organization instructions
-    void printColumns(bool includeIndex); // print all columns
-    void printEntities(vector<Entity*> entities, bool reverse, bool includeIndex); // print all entities and reverses the output if reverse is true
+    void printColumns(bool includeIndex, int type); // print all columns
+    void printEntities(vector<Entity*> entities, bool reverse, bool includeIndex, int type); // print all entities in a list and reverses the output if reverse is true
     void clearBuffer(); // clears the stream buffer until it reaches \n
     char getChar(string s); // gets user input char
     short getShort(string s); // gets user input short

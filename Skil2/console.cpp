@@ -45,33 +45,37 @@ void Console::printDisplayInstructions(int type) {
     }
 }
 
-void Console::printColumns(bool includeIndex) {
+void Console::printColumns(bool includeIndex, int type) {
     if(includeIndex) {
         print("      ");
     }
     print("Name");
-    addW(30);
-    print("Gender");
+    addW(type == PERSON ? 30 : 37);
+    print(type == PERSON ? "Gender" : "Computer type");
     addW(16);
-    print("Birth year");
-    addW(16);
-    println("Death year");
+    print(type == PERSON ? "Birth year" : "Year built");
+    if(type == PERSON) {
+        addW(16);
+        println("Death year");
+    } else {
+        newLine();
+    }
     if(includeIndex) {
         print("      ");
     }
-    for (int i = 0; i < 66; i++) {
+    for (int i = 0; i < (type == PERSON ? 66 : 57); i++) {
         print("=");
     }
     newLine();
 }
 
-void Console::printEntities(vector<Entity*> entities, bool reverse, bool includeIndex) {
+void Console::printEntities(vector<Entity*> entities, bool reverse, bool includeIndex, int type) {
     if(entities.size() <= 0) {
         println("Nothing to display.");
         return;
     }
     newLine();
-    printColumns(includeIndex);
+    printColumns(includeIndex, type);
     for(unsigned int i = (reverse ? entities.size() - 1 : 0); i < entities.size(); i += (reverse ? -1 : 1)) {
         if(includeIndex) {
             string s = to_string(i + 1);
@@ -170,11 +174,11 @@ void Console::process() {
             printDisplayInstructions(type);
             int o = getInstruction(1 + type);
             bool rev = getBool("Reverse output", 'y', 'n');
-            printEntities(manager.getOrganizedEntities(o, type), rev, false);
+            printEntities(manager.getOrganizedEntities(o, type), rev, false, type);
         }
         if(i == 1) { // search
             int type = !getBool("Persons or computers", 'p', 'c');
-            printEntities(manager.getSearchResults(*this, type), false, false);
+            printEntities(manager.getSearchResults(*this, type), false, false, type);
         }
         if(i == 2) { // add person
             manager.add(*this, !getBool("Person or computer", 'p', 'c'));
@@ -195,7 +199,7 @@ void Console::process() {
         if(i == 6 || i == 7) {
             int type = !getBool("Persons or computers", 'p', 'c');
             vector<Entity*> entities = manager.getOrganizedEntities(1, type); // organized in alphabetical order
-            printEntities(entities, false, true); // alphabetical organization
+            printEntities(entities, false, true, type); // alphabetical organization
             if(i == 6) { // edit person
                 manager.edit(*this, entities, type);
             } else { // remove person

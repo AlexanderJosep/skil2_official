@@ -4,8 +4,9 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
+#include "config.h"
 
-using namespace std;
+using namespace config;
 
 class Entity {
 public:

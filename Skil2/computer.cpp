@@ -22,13 +22,9 @@ void Computer::setData(string name, short year, short type) {
 
 string Computer::getOutput() {
     ostringstream out;
-  //  string b = (built == 0 ? "Not built" : "Built");
     int priorLength  = 0;
-  //  updateString(out, "" + name, priorLength, 0);
-  //  updateString(out, "" + b, priorLength, 28);
-  //  updateString(out, "" + to_string(type), priorLength, 12);
-   // if(built >= 0) {
-   //     updateString(out, "" + to_string(built), priorLength, 16);
-   // }
+    updateString(out, name, priorLength, 0);
+    updateString(out, MACHINE_TYPES[type], priorLength, 28);
+    updateString(out, (year < 0 ? "Not built" : to_string(year)), priorLength, 19);
     return out.str();
 }

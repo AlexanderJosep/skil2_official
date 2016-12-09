@@ -3,6 +3,7 @@
 EntityManager::EntityManager(int currentYear) {
     this -> currentYear = currentYear;
     this -> persons = storage.getPersons();
+    this -> computers = storage.getComputers();
 }
 
 void EntityManager::add(Console &c, int type) {
@@ -21,61 +22,117 @@ void EntityManager::add(Console &c, int type) {
     } else {
         short type = getComputerType(c, "ID of computer type");
         short yearBuilt = getYearBuilt(c, true);
-        Computer computer = Computer(name, type, yearBuilt);
-        computers.push_back(computer);
-        c.println("You have added "+name+" to the computers list.");
+        Computer computer = Computer(name, yearBuilt, type);
+        if(storage.saveComputer(computer)) {
+            computers.push_back(computer);
+            c.println("You have added "+name+" to the computers list.");
+        } else {
+            c.println("Failed to add "+name+" to the computers list.");
+        }
     }
     c.newLine();
 }
 
-void EntityManager::edit(Console &c, vector<Entity*> list, int type) {
-    short index = getRealIndex(list, getListIndex(c));
-    string oldName = persons[index].getName();
-    c.println("Old name: "+oldName);
-    string name = getName(c, false);
-    short oldGender = persons[index].getGender() ;
-    string oldGenderString = (oldGender == 0 ? "Male" : "Female");
-    c.println("Old gender: "+oldGenderString);
-    short gender = getGender(c, false);
-    short oldBirthYear = persons[index].getBirthYear();
-    c.println("Old birth year: "+to_string(oldBirthYear));
-    short birthYear = getYear(c, "Year built");
-    short oldDeathYear = persons[index].getDeathYear();
-    if(oldDeathYear > 0) {
-         c.println("Old death year: "+to_string(oldDeathYear));
+void EntityManager::edit(Console &c, vector<Entity*> entities, int type) {
+    short index = getRealIndex(entities, getListIndex(c, type), type);
+    string name;
+    string oldName;
+    if(type == PERSON) {
+        oldName = persons[index].getName();
+        c.println("Old name: "+oldName);
+        name = getName(c, false);
+        short oldGender = persons[index].getGender() ;
+        string oldGenderString = (oldGender == 0 ? "Male" : "Female");
+        c.println("Old gender: "+oldGenderString);
+        short gender = getGender(c, false);
+        short oldBirthYear = persons[index].getBirthYear();
+        c.println("Old birth year: "+to_string(oldBirthYear));
+        short birthYear = getYear(c, "Year built");
+        short oldDeathYear = persons[index].getDeathYear();
+        if(oldDeathYear > 0) {
+             c.println("Old death year: "+to_string(oldDeathYear));
+        } else {
+             c.println("Old person did not have a death year.");
+        }
+        short deathYear = getDeathYear(c, false, birthYear);
+        if(storage.editPerson(persons[index], oldName, oldGender, oldBirthYear, oldDeathYear)) {
+            persons[index].setData(name, gender, birthYear, deathYear);
+            c.println("You have edited "+name+" (old name: "+oldName+").");
+        } else {
+            c.println("You failed to edit "+name+" (old name: "+oldName+").");
+        }
     } else {
-         c.println("Old person did not have a death year");
-    }
-    short deathYear = getDeathYear(c, false, birthYear);
-    if(storage.editPerson(persons[index], oldName, oldGender, oldBirthYear, oldDeathYear)) {
-        persons[index].setData(name, gender, birthYear, deathYear);
-        c.println("You have edited "+name+" (old name: "+oldName+").");
-    } else {
-        c.println("You failed to edit "+name+" (old name: "+oldName+").");
+        oldName = computers[index].getName();
+        name = getName(c, false);
+        short oldType = computers[index].getType();
+        c.println("Old type is "+MACHINE_TYPES[oldType]+".");
+        short type = getComputerType(c, "New ID of computer type");
+        short oldYear = computers[index].getYear();
+        c.println("Old year built: "+to_string(oldYear));
+        short yearBuilt = getYearBuilt(c, false);
+        if(storage.editComputer(computers[index], oldName, oldYear, oldType)) {
+            computers[index].setData(name, yearBuilt, type);
+            c.println("You have edited "+name+" (old name: "+oldName+").");
+        } else {
+            c.println("You failed to edit "+name+" (old name: "+oldName+").");
+        }
     }
 }
 
-void EntityManager::remove(Console &c, vector<Entity*> list, int type) {
-    short index = getRealIndex(list, getListIndex(c));
-    string name = persons[index].getName();
+void EntityManager::remove(Console &c, vector<Entity*> entities, int type) {
+    if(entities.size() <= 0) {
+        c.println("Nothing to remove.");
+        return;
+    }
+    short index = getRealIndex(entities, getListIndex(c, type), type);
+    string name;
+    if(type == PERSON) {
+        name = persons[index].getName();
+    } else {
+        name = computers[index].getName();
+    }
     if(c.getBool("Are you sure you want to delete "+name, 'y', 'n')) {
-        if(storage.removePerson(persons[index])) {
-            persons.erase(persons.begin() + index);
-            c.println("You have deleted "+name+".");
+        if(type == PERSON) {
+            if(storage.removePerson(persons[index])) {
+                persons.erase(persons.begin() + index);
+                c.println("You have deleted "+name+".");
+            } else {
+                c.println("Failed to delete "+name+".");
+            }
         } else {
-            c.println("Failed to delete "+name+".");
+            if(storage.removeComputer(computers[index])) {
+                computers.erase(computers.begin() + index);
+                c.println("You have deleted "+name+".");
+            } else {
+                c.println("Failed to delete "+name+".");
+            }
         }
     } else {
         c.println("Cancelled.");
     }
 }
 
-short EntityManager::getRealIndex(vector<Person> pList, int index) {
-    for(unsigned int i = 0; i < persons.size(); i++) {
-        if(persons[i].getName() == pList[index - 1].getName() && persons[i].getGender() == pList[index - 1].getGender()
-                && persons[i].getBirthYear() == pList[index - 1].getBirthYear() && persons[i].getDeathYear() == pList[index - 1].getDeathYear()) {
-            index = i;
-            break;
+short EntityManager::getRealIndex(vector<Entity*> entities, int index, int type) {
+    if(type == PERSON) {
+        for(unsigned int i = 0; i < persons.size(); i++) {
+            if(persons[i].getName() == entities[index - 1] -> getName()) { // checks first for name before casting
+                Person* person = static_cast<Person*>(entities[index - 1]); // statically casts to entity to person
+                if(persons[i].getGender() == person -> getGender()
+                        && persons[i].getBirthYear() == person -> getBirthYear() && persons[i].getDeathYear() == person -> getDeathYear()) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+    } else {
+        for(unsigned int i = 0; i < computers.size(); i++) {
+            if(computers[i].getName() == entities[index - 1] -> getName()) { // checks first for name before casting
+                Computer* computer = static_cast<Computer*>(entities[index - 1]); // statically cast entity to computer
+                if(computers[i].getYear() == computer -> getYear() && computers[i].getType() == computer -> getType()) {
+                    index = i;
+                    break;
+                }
+            }
         }
     }
     return index;
@@ -160,13 +217,13 @@ short EntityManager::getComputerType(Console &c, string s) {
         // print out all computer types
         c.print("Computer types (ID in parenthesis): ");
         for(int i = 0; i < NUMBER_OF_MACHINES_TYPES; i++) {
-            c.print(MACHINE_TYPES[i]+" ("+to_string(i + 1)+")");
+            c.print(MACHINE_TYPES[i]+"("+to_string(i + 1)+")");
             if(i + 1 >= NUMBER_OF_MACHINES_TYPES) {
                 c.newLine();
             } else if(i + 2 < NUMBER_OF_MACHINES_TYPES) {
                 c.print(", ");
             } else {
-                c.print("and ");
+                c.print(" and ");
             }
         }
         type = c.getShort(s);
