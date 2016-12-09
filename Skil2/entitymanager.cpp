@@ -192,7 +192,6 @@ short EntityManager::getYear(Console &c, string s) {
             break;
         }
         c.println("Invalid year!");
-        c.clearBuffer();
     }
     return year;
 }
@@ -207,7 +206,6 @@ short EntityManager::getDeathYear(Console &c, bool n, int birthYear) {
                 break;
             }
             c.println("Please choose a death year the same or after the birth year.");
-            c.clearBuffer();
         }
     }
     return deathYear;
@@ -248,7 +246,6 @@ short EntityManager::getYearBuilt(Console &c, bool n) {
                 break;
             }
             c.println("Please choose a valid year.");
-            c.clearBuffer();
         }
     }
     return yearBuilt;
@@ -432,7 +429,7 @@ vector<Entity*> EntityManager::getSearchResults(Console &c, int type) {
     if(type == PERSON) {
         string male = "male";
         string female = "female";
-        for(int i = 0; i < persons.size(); i++) {
+        for(unsigned int i = 0; i < persons.size(); i++) {
             if(toLowerCase(persons[i].getName()).find(search) != string::npos || to_string(persons[i].getBirthYear()).find(search) != string::npos
                     || (persons[i].getGender() == 0 && male.find(search) != string::npos) || (search != male && persons[i].getGender() == 1 && female.find(search) != string::npos)
                     || (persons[i].getDeathYear() >= 0 && to_string(persons[i].getDeathYear()).find(search) != string::npos)) {
@@ -442,7 +439,7 @@ vector<Entity*> EntityManager::getSearchResults(Console &c, int type) {
     } else {
         string built = "built";
         string notBuilt = "not built";
-        for(int j = 0; j < computers.size(); j++) {
+        for(unsigned int j = 0; j < computers.size(); j++) {
             bool added = false;
             for(int i = 0; i < NUMBER_OF_MACHINES_TYPES; i++) {
                 if(computers[j].getType() == i) {

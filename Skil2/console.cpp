@@ -102,10 +102,28 @@ char Console::getChar(string s) {
 }
 
 short Console::getShort(string s) {
-    clearBuffer();
-    print(s + ": ");
     short in;
-    cin >> in;
+    clearBuffer();
+    while(true) {
+        string str;
+        print(s + ": ");
+        getline(cin, str);
+        bool accept = true;
+        for(unsigned int i = 0; i < str.length(); i++) {
+            if(!isdigit(str[i])) {
+                accept = false;
+                break;
+            }
+        }
+        // this is to get rid of the possibility to give errors when hitting just enter.
+        if(str.size() <= 0 || !accept) {
+            println("Invalid input!");
+            continue;
+        }
+        in = atoi(str.c_str());
+        break;
+    }
+    ignoreNextClear();
     return in;
 }
 
