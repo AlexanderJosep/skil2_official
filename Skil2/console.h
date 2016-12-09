@@ -17,6 +17,7 @@ public:
     Console();
     void addW(int w); // prints setw(w) to the console
     void print(string s); // prints s to the console
+    void print(char c); // prints char c to the console
     void println(string s); // prints s and \n to the console
     void newLine(); // prints \n to the console
     void printInstructions(); // prints all basic command instructions
@@ -28,7 +29,7 @@ public:
     char getChar(string s); // gets user input char
     short getShort(string s); // gets user input short
     bool getBool(string s, char y, char n); // gets user input bool (y/n)
-    int getOptionIndex(string s, char a, char b, char c); // gets user input int (a=0,b=1,c=2)
+    int getOptionIndex(string s, char chars[], int count); // gets user option input, returns char index
     string getString(string s, bool ignore); // gets user input string and if ignore is true it ignores the first letter in the input buffer
     int getInstruction(int type); // gets the basic and organization command instruction
     void process(); // includes the main program loop

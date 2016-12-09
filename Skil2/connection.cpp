@@ -23,6 +23,18 @@ void Connection::setComputer(Computer *computer) {
     this -> computer = computer;
 }
 
+string Connection::getName() { // we need to override this method due to both the person's and the computer's name could be edited
+    return (person -> getName())+" <-> "+ (computer -> getName());
+}
+
+Person* Connection::getPerson() {
+    return person;
+}
+
+Computer* Connection::getComputer() {
+    return computer;
+}
+
 string Connection::getOutput() {
     ostringstream out;
     int priorLength  = 0;

@@ -21,7 +21,7 @@ bool SnakeWidget::hasStarted() {
     return started;
 }
 
-void SnakeWidget::paintEvent(QPaintEvent *event) {
+void SnakeWidget::paintEvent(QPaintEvent*) {
     painter.begin(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -71,7 +71,7 @@ void SnakeWidget::paintEvent(QPaintEvent *event) {
     painter.end();
 }
 
-void SnakeWidget::mousePressEvent(QMouseEvent *event) {
+void SnakeWidget::mousePressEvent(QMouseEvent*) {
     setFocus();
 }
 

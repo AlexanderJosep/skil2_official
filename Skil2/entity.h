@@ -11,7 +11,7 @@ using namespace config;
 class Entity {
 public:
     Entity();
-    string getName();
+    virtual string getName();
     int getID();
     void setID(int id);
     virtual string getOutput() ; // gets output ready to be printed to the console

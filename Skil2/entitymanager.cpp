@@ -6,6 +6,7 @@ EntityManager::EntityManager(int currentYear) {
     this -> computers = storage.getComputers();
     this -> connections = storage.getConnections();
     // set the person and computer pointer in connections
+    // we're setting this to get a correct output when displaying connections in the console
     for(unsigned int i = 0; i < connections.size(); i++) {
        for(unsigned int j = 0; j < persons.size(); j++) {
             if(persons[j].getID() == connections[i].getPersonID()) {
@@ -142,14 +143,20 @@ void EntityManager::remove(Console &c, vector<Entity*> entities, int type) {
         c.newLine();
         return;
     }
-    short index = getRealIndex(entities, getListIndex(c, type), type);
+    short index = getListIndex(c, type);
+    if(type != CONNECTION) { // the connection list hasn't been organized and doesn't need to be
+        index = getRealIndex(entities, index, type); // get real non-organized index
+    }
     string name;
     if(type == PERSON) {
         name = persons[index].getName();
-    } else {
+    } else if(type == COMPUTER){
         name = computers[index].getName();
+    } else {
+        name = connections[index - 1].getName();
     }
-    if(c.getBool("Are you sure you want to delete "+name, 'y', 'n')) {
+    string addon = type == CONNECTION ? " the connection" : "";
+    if(c.getBool("Are you sure you want to delete"+addon+" '"+name+"'", 'y', 'n')) {
         if(type == PERSON) {
             if(storage.removePerson(persons[index])) {
                 persons.erase(persons.begin() + index);
@@ -157,9 +164,16 @@ void EntityManager::remove(Console &c, vector<Entity*> entities, int type) {
             } else {
                 c.println("Failed to delete "+name+".");
             }
-        } else {
+        } else if(type == COMPUTER) {
             if(storage.removeComputer(computers[index])) {
                 computers.erase(computers.begin() + index);
+                c.println("You have deleted "+name+".");
+            } else {
+                c.println("Failed to delete "+name+".");
+            }
+        } else {
+            if(storage.removeConnection(connections[index - 1])) {
+                connections.erase(connections.begin() + index - 1);
                 c.println("You have deleted "+name+".");
             } else {
                 c.println("Failed to delete "+name+".");
@@ -175,7 +189,7 @@ short EntityManager::getRealIndex(vector<Entity*> entities, int index, int type)
     if(type == PERSON) {
         for(unsigned int i = 0; i < persons.size(); i++) {
             if(persons[i].getName() == entities[index - 1] -> getName()) { // checks first for name before casting
-                Person* person = static_cast<Person*>(entities[index - 1]); // statically casts to entity to person
+                Person* person = static_cast<Person*>(entities[index - 1]);
                 if(persons[i].getGender() == person -> getGender()
                         && persons[i].getBirthYear() == person -> getBirthYear() && persons[i].getDeathYear() == person -> getDeathYear()) {
                     index = i;
@@ -186,7 +200,7 @@ short EntityManager::getRealIndex(vector<Entity*> entities, int index, int type)
     } else {
         for(unsigned int i = 0; i < computers.size(); i++) {
             if(computers[i].getName() == entities[index - 1] -> getName()) { // checks first for name before casting
-                Computer* computer = static_cast<Computer*>(entities[index - 1]); // statically cast entity to computer
+                Computer* computer = static_cast<Computer*>(entities[index - 1]);
                 if(computers[i].getYear() == computer -> getYear() && computers[i].getType() == computer -> getType()) {
                     index = i;
                     break;
@@ -199,9 +213,10 @@ short EntityManager::getRealIndex(vector<Entity*> entities, int index, int type)
 
 short EntityManager::getListIndex(Console &c, int type) {
     short index;
+    int listSize = type == PERSON ? persons.size() : (type == COMPUTER ? computers.size() : connections.size());
     while (true){
-        index = c.getShort("Select index from the list (1-"+to_string(type == PERSON ? persons.size() : computers.size())+")");
-        if(index > 0 && index <= (signed) (type == PERSON ? persons.size() : computers.size())) {
+        index = c.getShort("Select index from the list (1-"+to_string(listSize)+")");
+        if(index > 0 && index <= listSize) {
             break;
         }
         c.println("Invalid index!");
@@ -215,7 +230,9 @@ string EntityManager::getName(Console &c, bool n, int type) {
     while(true) {
         name = trim(name);
         if(validName(name, type)) {
-           name = capitialize(name);
+           if(type != COMPUTER) { // computers shouildn't have to be capitalized (IBM, BBC Micro & more)
+                name = capitialize(name);
+           }
            break;
         } else {
             c.println("Invalid name!");
@@ -255,7 +272,7 @@ short EntityManager::getDeathYear(Console &c, bool n, int birthYear) {
         while(true) {
             string s = n ? "Death year" : "New death year";
             deathYear = c.getShort(s);
-            if(deathYear >= birthYear && deathYear <= currentYear) {
+            if(deathYear >= birthYear && deathYear <= currentYear) { // disallow years before birth year and future years
                 break;
             }
             c.println("Please choose a death year the same or after the birth year.");
@@ -364,6 +381,7 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
         vector<int> years;
         vector<Person*> copyPersons;
         vector<Computer*> copyComputers;
+        // we add all the years to a vector
         if(type == PERSON) {
             for(unsigned int i = 0; i < persons.size(); i++) {
                 if((o == 3 && persons[i].getBirthYear() >= 0) || (o == 4 && persons[i].getDeathYear() >= 0)) {
@@ -377,7 +395,7 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
                 }
             }
         }
-        sort(years.begin(), years.end());
+        sort(years.begin(), years.end()); // sort the years, smallest years first
         if(type == PERSON) {
             for(unsigned int i = 0; i < persons.size(); i++) {
                 copyPersons.push_back(&persons[i]);
@@ -387,7 +405,7 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
                 copyComputers.push_back(&computers[i]);
             }
         }
-
+        // then we link each year to a entity and add it to a list to get a sorted entity list
         for(unsigned int i = 0; i < years.size(); i++) {
             if(type == PERSON) {
                 for(unsigned int j = 0; j < copyPersons.size(); j++) {
@@ -407,6 +425,7 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
                 }
             }
         }
+        // then we add those who haven't been added to the return list
         if(o == 4) {
             for(unsigned int j = 0; j < copyPersons.size(); j++) {
                  out.push_back(copyPersons[j]);
@@ -421,7 +440,7 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
     if(o == 3 && type == COMPUTER) {
         for(int i = 0; i < NUMBER_OF_MACHINES_TYPES; i++) {
             for(unsigned int j = 0; j < computers.size(); j++) {
-                if(computers[j].getType() == i) {
+                if(computers[j].getType() == i) { // check for the same type
                     out.push_back(&computers[j]);
                 }
             }
@@ -452,7 +471,7 @@ string EntityManager::trim(string s) {
 }
 
 string EntityManager::capitialize(string s) {
-    s = toLowerCase(s);
+    s = toLowerCase(s); // lowercase everything first before we capitalize the first letter in a word
     const char* c = s.c_str();
     bool capitalizeNext = true;
     char out[s.length() - 1];
@@ -460,7 +479,7 @@ string EntityManager::capitialize(string s) {
         out[i] = *(c + i);
         if(capitalizeNext && out[i] != ' ') {
             capitalizeNext = false;
-            if(isalpha(out[i])) {
+            if(isalpha(out[i])) { // capitalize the letter if it is actually a letter
                 out[i] -= 32;
             }
         }
@@ -481,8 +500,8 @@ string EntityManager::toLowerCase(string s) {
 vector<Entity*> EntityManager::getSearchResults(Console &c, int type) {
     if(type == PERSON) {
         c.println("You can search for 'male' or 'female' to get gender results.");
-    } else {
-        c.println("You can search for 'built' or 'not built' to get built or not built results.");
+    } else if(type == COMPUTER) {
+        c.println("You can search for 'built' or 'not built' to get specific results.");
     }
     string search = toLowerCase(c.getString("Search", true));
     vector<Entity*> out;
@@ -496,7 +515,8 @@ vector<Entity*> EntityManager::getSearchResults(Console &c, int type) {
                out.push_back(&persons[i]);
             }
         }
-    } else {
+    }
+    if(type == COMPUTER) {
         string built = "built";
         string notBuilt = "not built";
         for(unsigned int j = 0; j < computers.size(); j++) {
@@ -516,6 +536,14 @@ vector<Entity*> EntityManager::getSearchResults(Console &c, int type) {
             if(toLowerCase(computers[j].getName()).find(search) != string::npos || (computers[j].getYear() && to_string(computers[j].getYear()).find(search) != string::npos)
                     || (computers[j].getYear() >= 0 && built.find(search) != string::npos) || (search != built && computers[j].getYear() < 0 && notBuilt.find(search) != string::npos)) {
                out.push_back(&computers[j]);
+            }
+        }
+    }
+    if(type == CONNECTION) {
+        for(unsigned int j = 0; j < connections.size(); j++) {
+            // search for either the person or the computer in a connection
+            if(toLowerCase(connections[j].getPerson() -> getName()).find(search) || toLowerCase(connections[j].getComputer() -> getName()).find(search)) {
+                out.push_back(&connections[j]);
             }
         }
     }

@@ -14,6 +14,10 @@ void Console::print(string s) {
     cout << s;
 }
 
+void Console::print(char c) {
+    cout << c;
+}
+
 void Console::println(string s) {
     cout << s << endl;
 }
@@ -36,18 +40,18 @@ void Console::clearBuffer() {
 
 void Console::printInstructions() {
     for(int i = 0; i < INSTRUCTIONS_LENGTH; i++) {
-        println(INSTRUCTIONS[i]);
+        println("*\t"+INSTRUCTIONS[i]);
     }
 }
 
 void Console::printDisplayInstructions(int type) {
     if(type == PERSON) {
         for(int i = 0; i < DISPLAY_PERSON_INSTRUCTIONS_LENGTH; i++) {
-            println(DISPLAY_PERSON_INSTRUCTIONS[i]);
+            println("*\t"+DISPLAY_PERSON_INSTRUCTIONS[i]);
         }
     } else {
         for(int i = 0; i < DISPLAY_COMPUTER_INSTRUCTIONS_LENGTH; i++) {
-            println(DISPLAY_COMPUTER_INSTRUCTIONS[i]);
+            println("*\t"+DISPLAY_COMPUTER_INSTRUCTIONS[i]);
         }
     }
 }
@@ -150,15 +154,30 @@ bool Console::getBool(string s, char y, char n) {
     return c == y;
 }
 
-int Console::getOptionIndex(string s, char a, char b, char c) {
+int Console::getOptionIndex(string s, char chars[], int count) {
     int ch = 0;
     while(true) {
-        if(c != 10) {
+        if(ch != 10) {
             clearBuffer();
         }
-        print(s + " ("+a+"/"+b+"/"+c+"): ");
+        print(s + " (");
+        for(int i = 0; i < count; i++) {
+            print(chars[i]);
+            if(i + 1 < count) {
+                print("/");
+            } else {
+                print("): ");
+            }
+        }
         ch = getchar();
-        if(ch == a || ch == b || ch == c) {
+        bool found = false;
+        for(int i = 0; i < count; i++) {
+            if(chars[i] == ch) {
+                found = true;
+                break;
+            }
+        }
+        if(found) {
             break;
         }
         println("Invalid command!");
@@ -166,7 +185,12 @@ int Console::getOptionIndex(string s, char a, char b, char c) {
     if (cin.fail()) {
        clearBuffer();
     }
-    return ch == a ? 0 : (ch == b ? 1 : 2);
+    for(int i = 0; i < count; i++) {
+        if(chars[i] == ch) {
+            return i;
+        }
+    }
+    return 0;
 }
 
 string Console::getString(string s, bool ignore) {
@@ -225,7 +249,8 @@ void Console::process() {
     while(true) {
         int i = getInstruction(0);
         if(i == 0) { // display
-            int type = getOptionIndex("Person, computer or a connection", 'p', 'c', 'o');
+            char options[3] = { 'p', 'c', 'o'};
+            int type = getOptionIndex("Person, computer or a connection", options, 3);
             int o = 0; // no organization
             if(type != 2) {
                 printDisplayInstructions(type);
@@ -236,12 +261,14 @@ void Console::process() {
             printEntities(manager.getOrganizedEntities(o, type), rev, false, type);
         }
         if(i == 1) { // search
-            int type = !getBool("Persons or computers", 'p', 'c');
+            char options[4] = { 'p', 'c', 'o'};
+            int type = getOptionIndex("Search for a person, computeror a connection", options, 3);
             printEntities(manager.getSearchResults(*this, type), false, false, type);
             ignoreNextClear();
         }
         if(i == 2) { // add person
-            manager.add(*this, getOptionIndex("Person, computer or a connection", 'p', 'c', 'o'));
+            char options[3] = { 'p', 'c', 'o'};
+            manager.add(*this, getOptionIndex("Person, computer or a connection", options, 3));
         }
         if(i == 3) { // info
             printInstructions();
@@ -259,7 +286,13 @@ void Console::process() {
             printInstructions();
         }
         if(i == 6 || i == 7) {
-            int type = !getBool("Persons or computers", 'p', 'c');
+            int type = 0;
+            if(i == 6) {
+                type = !getBool("Persons or computers", 'p', 'c');
+            } else {
+                char options[3] = { 'p', 'c', 'o'};
+                type = getOptionIndex("Person, computer or a connection", options, 3);
+            }
             vector<Entity*> entities = manager.getOrganizedEntities(1, type); // organized in alphabetical order
             if(entities.size() > 0) {
                 printEntities(entities, false, true, type);

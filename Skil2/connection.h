@@ -10,8 +10,11 @@ public:
     Connection(int personID, int computerID);
     int getPersonID(); // get person id
     int getComputerID(); // get computer id
+    string getName();
     void setPerson(Person *person);
     void setComputer(Computer *computer);
+    Person* getPerson();
+    Computer* getComputer();
     string getOutput(); // gets output ready to be printed to the console
 private:
     int personID;

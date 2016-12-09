@@ -10,7 +10,6 @@ Storage::Storage() {
 vector<Person> Storage::getPersons() {
     vector<Person> persons;
     QSqlQuery query(database);
-
     query.exec("SELECT * FROM persons");
     while(query.next()){
         string name = query.value("name").toString().toStdString();
@@ -55,7 +54,6 @@ vector<Connection> Storage::getConnections() {
 
 bool Storage::savePerson(Person &person) {
     QSqlQuery query(database);
-
     int id = 1;
     query.exec("SELECT * FROM sqlite_sequence WHERE name='persons'");
     while(query.next()) { // get next auto incr. id
@@ -127,19 +125,27 @@ bool Storage::editComputer(Computer &computer, string name, short yearBuilt, sho
 
 bool Storage::removePerson(Person &person) {
    QSqlQuery query(database);
-   return query.exec("DELETE FROM persons WHERE id = "+QString::fromStdString(to_string(person.getID())));
+   if(query.exec("DELETE FROM persons WHERE id = "+QString::fromStdString(to_string(person.getID())))) {
+       return query.exec("DELETE FROM connections WHERE person_id = "+QString::fromStdString(to_string(person.getID())));
+   } else {
+       return false;
+   }
 }
 
 bool Storage::removeComputer(Computer &computer) {
     QSqlQuery query(database);
-    return query.exec("DELETE FROM computers WHERE id = "+QString::fromStdString(to_string(computer.getID())));
+    if(query.exec("DELETE FROM computers WHERE id = "+QString::fromStdString(to_string(computer.getID())))) {
+        return query.exec("DELETE FROM connections WHERE computer_id = "+QString::fromStdString(to_string(computer.getID())));
+    } else {
+        return false;
+    }
 }
 
 bool Storage::addConnection(Connection &connection){
     QSqlQuery query(database);
     int id = 1;
-    query.exec("SELECT * FROM sqlite_sequence WHERE name='connections'");
-    while(query.next()) { // get next auto incr. id
+    query.exec("SELECT * FROM sqlite_sequence WHERE name='connections'"); // get next auto incr. id
+    while(query.next()) {
         id = query.value("seq").toString().toUInt() + 1;
         break;
     }
@@ -150,6 +156,11 @@ bool Storage::addConnection(Connection &connection){
     query.addBindValue(QString::fromStdString(to_string(connection.getPersonID())));
     query.addBindValue(QString::fromStdString(to_string(connection.getComputerID())));
     return query.exec();
+}
+
+bool Storage::removeConnection(Connection &connection) {
+   QSqlQuery query(database);
+   return query.exec("DELETE FROM connections WHERE id = "+QString::fromStdString(to_string(connection.getID())));
 }
 
 void Storage::close() {

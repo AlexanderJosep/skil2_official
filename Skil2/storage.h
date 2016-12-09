@@ -26,6 +26,7 @@ public:
     bool removePerson(Person &person); // removes a person from a sql database
     bool removeComputer(Computer &computer); // removes a computer from a sql database
     bool addConnection(Connection &connection); // adds a connection between a computer and a person
+    bool removeConnection(Connection &connection); // removes a connection between a computer and a person
     void close(); // closes a connection with sql databases
 
 private:
