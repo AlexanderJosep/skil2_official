@@ -192,8 +192,10 @@ void Console::process() {
         if(i == 5) { // clear console
             #ifdef _WIN32
                 system("cls");
+                printInstructions();
             #else
                 system("clear");
+                printInstructions();
             #endif
         }
         if(i == 6 || i == 7) {
