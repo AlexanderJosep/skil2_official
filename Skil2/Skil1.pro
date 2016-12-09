@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     snakewidget.cpp \
     snakethread.cpp \
     entity.cpp \
-    entitymanager.cpp
+    entitymanager.cpp \
+    connection.cpp
 
 HEADERS += \
     person.h \
@@ -35,6 +36,7 @@ HEADERS += \
     snakethread.h \
     config.h \
     entity.h \
-    entitymanager.h
+    entitymanager.h \
+    connection.h
 
 DISTFILES +=

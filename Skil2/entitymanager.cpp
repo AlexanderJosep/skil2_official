@@ -4,6 +4,7 @@ EntityManager::EntityManager(int currentYear) {
     this -> currentYear = currentYear;
     this -> persons = storage.getPersons();
     this -> computers = storage.getComputers();
+    this -> connections = storage.getConnections();
 }
 
 void EntityManager::end() {
@@ -11,8 +12,8 @@ void EntityManager::end() {
 }
 
 void EntityManager::add(Console &c, int type) {
-    string name = getName(c, true, type);
     if(type == PERSON) {
+        string name = getName(c, true, type);
         short gender = getGender(c, true);
         short birthYear = getYear(c, "Birth year");
         short deathYear = getDeathYear(c, true, birthYear);
@@ -23,7 +24,8 @@ void EntityManager::add(Console &c, int type) {
         } else {
             c.println("Failed to add "+name+" to the persons list.");
         }
-    } else {
+    } else if(type == COMPUTER) {
+        string name = getName(c, true, type);
         short type = getComputerType(c, "ID of computer type");
         short yearBuilt = getYearBuilt(c, true);
         Computer computer = Computer(name, yearBuilt, type);
@@ -32,6 +34,32 @@ void EntityManager::add(Console &c, int type) {
             c.println("You have added "+name+" to the computers list.");
         } else {
             c.println("Failed to add "+name+" to the computers list.");
+        }
+    } else { // add a connection
+        vector<Entity*> personsList = getOrganizedEntities(1, PERSON);
+        vector<Entity*> computersList = getOrganizedEntities(1, COMPUTER);
+
+        c.printEntities(personsList, false, true, PERSON);
+        c.println("Person:");
+        short personIndex = getRealIndex(personsList, getListIndex(c, PERSON), PERSON);
+
+        c.printEntities(computersList, false, true, COMPUTER);
+        c.println("Computer:");
+        short computerIndex = getRealIndex(computersList, getListIndex(c, COMPUTER), COMPUTER);
+
+        for(Connection connection : connections) {
+            if(connection.getPersonID() == persons[personIndex].getID() && connection.getComputerID() == computers[computerIndex].getID()) {
+                c.println("That connection has already been made.");
+                c.newLine();
+                return;
+            }
+        }
+        Connection connection = Connection(persons[personIndex].getID(), computers[computerIndex].getID());
+        if(storage.addConnection(connection)) {
+            connections.push_back(connection);
+            c.println("Connected "+persons[personIndex].getName() +" and "+computers[computerIndex].getName()+" together.");
+        } else {
+            c.println("Failed to connect "+persons[personIndex].getName() +" and "+computers[computerIndex].getName()+" together.");
         }
     }
     c.newLine();
@@ -159,7 +187,6 @@ short EntityManager::getListIndex(Console &c, int type) {
             break;
         }
         c.println("Invalid index!");
-        c.clearBuffer();
     }
     return index;
 }

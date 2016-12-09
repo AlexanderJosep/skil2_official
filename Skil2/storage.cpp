@@ -10,6 +10,7 @@ Storage::Storage() {
 vector<Person> Storage::getPersons() {
     vector<Person> persons;
     QSqlQuery query(database);
+
     query.exec("SELECT * FROM persons");
     while(query.next()){
         string name = query.value("name").toString().toStdString();
@@ -38,8 +39,31 @@ vector<Computer> Storage::getComputers() {
     return computers;
 }
 
+vector<Connection> Storage::getConnections() {
+    vector<Connection> connections;
+    QSqlQuery query(database);
+    query.exec("SELECT * FROM connections");
+    while(query.next()){
+       int personID = query.value("person_id").toUInt();
+       int computerID = query.value("computer_id").toUInt();
+       Connection c = Connection(personID, computerID);
+       c.setID(query.value("id").toUInt());
+       connections.push_back(c);
+    }
+    return connections;
+}
+
 bool Storage::savePerson(Person &person) {
     QSqlQuery query(database);
+
+    int id = 1;
+    query.exec("SELECT * FROM sqlite_sequence WHERE name='persons'");
+    while(query.next()) { // get next auto incr. id
+        id = query.value("seq").toString().toUInt() + 1;
+        break;
+    }
+    person.setID(id);
+
     query.prepare("INSERT INTO persons (name,gender,birth_year,death_year) VALUES "
                   "('"+QString::fromStdString(person.getName())+"',?,?,?)");
     query.addBindValue(QString::fromStdString(to_string(person.getGender())));
@@ -50,6 +74,15 @@ bool Storage::savePerson(Person &person) {
 
 bool Storage::saveComputer(Computer &computer) {
     QSqlQuery query(database);
+
+    int id = 1;
+    query.exec("SELECT * FROM sqlite_sequence WHERE name='computers'");
+    while(query.next()) { // get next auto incr. id
+        id = query.value("seq").toString().toUInt() + 1;
+        break;
+    }
+    computer.setID(id);
+
     query.prepare("INSERT INTO computers (name,year_built,type) VALUES "
                   "('"+QString::fromStdString(computer.getName())+"',?,?)");
     query.addBindValue(QString::fromStdString(to_string(computer.getYear())));
@@ -93,36 +126,30 @@ bool Storage::editComputer(Computer &computer, string name, short yearBuilt, sho
 }
 
 bool Storage::removePerson(Person &person) {
-    QSqlQuery query(database);
-    query.prepare("SELECT * FROM persons WHERE name='"+QString::fromStdString(person.getName())+"' AND gender=? AND "
-                  "birth_year=? AND death_year=?");
-    query.addBindValue(QString::fromStdString(to_string(person.getGender())));
-    query.addBindValue(QString::fromStdString(to_string(person.getBirthYear())));
-    query.addBindValue(QString::fromStdString(to_string(person.getDeathYear())));
-
-    query.exec();
-    while(query.next()) { // so it deletes only 1 if there are multiple persons with the same details
-        return query.exec("DELETE FROM persons WHERE id = "+QString::fromStdString(to_string(query.value("id").toUInt())));
-    }
-    return false;
+   QSqlQuery query(database);
+   return query.exec("DELETE FROM persons WHERE id = "+QString::fromStdString(to_string(person.getID())));
 }
 
 bool Storage::removeComputer(Computer &computer) {
     QSqlQuery query(database);
-    query.prepare("SELECT * FROM computers WHERE name='"+QString::fromStdString(computer.getName())+"' AND year_built=? AND "
-                  "type=?");
-    query.addBindValue(QString::fromStdString(to_string(computer.getYear())));
-    query.addBindValue(QString::fromStdString(to_string(computer.getType())));
-
-    query.exec();
-    while(query.next()) { // so it deletes only 1 if there are multiple computers with the same details
-        return query.exec("DELETE FROM computers WHERE id = "+QString::fromStdString(to_string(query.value("id").toUInt())));
-    }
-    return false;
+    return query.exec("DELETE FROM computers WHERE id = "+QString::fromStdString(to_string(computer.getID())));
 }
 
-void Storage::addConnection(int personID, int computerID){
+bool Storage::addConnection(Connection &connection){
+    QSqlQuery query(database);
+    int id = 1;
+    query.exec("SELECT * FROM sqlite_sequence WHERE name='connections'");
+    while(query.next()) { // get next auto incr. id
+        id = query.value("seq").toString().toUInt() + 1;
+        break;
+    }
+    connection.setID(id);
 
+    query.prepare("INSERT INTO connections (person_id,computer_id) VALUES "
+                  "(?,?)");
+    query.addBindValue(QString::fromStdString(to_string(connection.getPersonID())));
+    query.addBindValue(QString::fromStdString(to_string(connection.getComputerID())));
+    return query.exec();
 }
 
 void Storage::close() {

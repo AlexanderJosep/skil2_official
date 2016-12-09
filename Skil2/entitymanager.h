@@ -7,6 +7,7 @@
 #include "storage.h"
 #include "person.h"
 #include "computer.h"
+#include "connection.h"
 
 using namespace config;
 
@@ -34,6 +35,7 @@ private:
     string toLowerCase(string s); // lowercases a string
     vector<Person> persons;
     vector<Computer> computers;
+    vector<Connection> connections;
     Storage storage;
     int currentYear;
 };

@@ -28,6 +28,7 @@ public:
     char getChar(string s); // gets user input char
     short getShort(string s); // gets user input short
     bool getBool(string s, char y, char n); // gets user input bool (y/n)
+    int getOptionIndex(string s, char a, char b, char c); // gets user input int (a=0,b=1,c=2)
     string getString(string s, bool ignore); // gets user input string and if ignore is true it ignores the first letter in the input buffer
     int getInstruction(int type); // gets the basic and organization command instruction
     void process(); // includes the main program loop

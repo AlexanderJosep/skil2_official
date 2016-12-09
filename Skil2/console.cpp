@@ -147,6 +147,25 @@ bool Console::getBool(string s, char y, char n) {
     return c == y;
 }
 
+int Console::getOptionIndex(string s, char a, char b, char c) {
+    int ch = 0;
+    while(true) {
+        if(c != 10) {
+            clearBuffer();
+        }
+        print(s + " ("+a+"/"+b+"/"+c+"): ");
+        ch = getchar();
+        if(ch == a || ch == b || ch == c) {
+            break;
+        }
+        println("Invalid command!");
+    }
+    if (cin.fail()) {
+       clearBuffer();
+    }
+    return ch == a ? 0 : (ch == b ? 1 : 2);
+}
+
 string Console::getString(string s, bool ignore) {
     string in;
     while(true) {
@@ -209,7 +228,6 @@ void Console::process() {
             int o = getInstruction(1 + type);
             bool rev = getBool("Reverse output", 'y', 'n');
             printEntities(manager.getOrganizedEntities(o, type), rev, false, type);
-
         }
         if(i == 1) { // search
             int type = !getBool("Persons or computers", 'p', 'c');
@@ -217,7 +235,7 @@ void Console::process() {
             ignoreNextClear();
         }
         if(i == 2) { // add person
-            manager.add(*this, !getBool("Person or computer", 'p', 'c'));
+            manager.add(*this, getOptionIndex("Person, computer or connection", 'p', 'c', 'o'));
         }
         if(i == 3) { // info
             printInstructions();
