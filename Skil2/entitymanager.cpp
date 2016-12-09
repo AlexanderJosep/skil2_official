@@ -410,7 +410,9 @@ string EntityManager::capitialize(string s) {
         out[i] = *(c + i);
         if(capitalizeNext && out[i] != ' ') {
             capitalizeNext = false;
-            out[i] -= 32;
+            if(isalpha(out[i])) {
+                out[i] -= 32;
+            }
         }
         if(out[i] == ' ') {
             capitalizeNext = true;

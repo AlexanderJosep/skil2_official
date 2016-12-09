@@ -16,7 +16,9 @@ vector<Person> Storage::getPersons() {
         int gender = query.value("gender").toUInt();
         int birthYear = query.value("birth_year").toUInt();
         int deathYear = query.value("death_year").toInt();
-        persons.push_back(Person(name, gender, birthYear, deathYear));
+        Person p = Person(name, gender, birthYear, deathYear);
+        p.setID(query.value("id").toUInt());
+        persons.push_back(p);
     }
     return persons;
 }
@@ -29,7 +31,9 @@ vector<Computer> Storage::getComputers() {
         string name = query.value("name").toString().toStdString();
         int yearBuilt = query.value("year_built").toUInt();
         int type = query.value("type").toUInt();
-        computers.push_back(Computer(name, yearBuilt, type));
+        Computer c = Computer(name, yearBuilt, type);
+        c.setID(query.value("id").toUInt());
+        computers.push_back(c);
     }
     return computers;
 }
@@ -115,6 +119,10 @@ bool Storage::removeComputer(Computer &computer) {
         return query.exec("DELETE FROM computers WHERE id = "+QString::fromStdString(to_string(query.value("id").toUInt())));
     }
     return false;
+}
+
+void Storage::addConnection(int personID, int computerID){
+
 }
 
 void Storage::close() {
