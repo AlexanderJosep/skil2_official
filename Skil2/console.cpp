@@ -309,7 +309,10 @@ void Console::process() {
             }
         }
         if(i == 8) { // snake
-            Snake(*this);
+            Snake snake = Snake(*this);
+            int points = snake.getPoints();
+            int gridSize = snake.getGridSize();
+            manager.addSnakeScore(*this, points, gridSize);
         }
         if(i != 3 && i != 5) {
             println("Press 'i' for instructions.");

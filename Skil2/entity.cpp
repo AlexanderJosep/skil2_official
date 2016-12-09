@@ -13,7 +13,7 @@ int Entity::getID() {
 }
 
 string Entity::getOutput() {
-    return NULL;
+    return NULL; // should never be used
 }
 
 void Entity::setID(int id) {
@@ -22,7 +22,7 @@ void Entity::setID(int id) {
 
 void Entity::updateString(ostringstream &o, string data, int &priorLength, int columnSize) {
     if(o.tellp() > 0 && priorLength < 30) {
-        o << setw(columnSize - (priorLength - data.length()));
+        o << setw(columnSize - (priorLength - data.length())); // to keep the spacing correct we calculate the distance
     }
     o << data;
     priorLength = data.length();

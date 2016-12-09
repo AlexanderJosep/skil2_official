@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     snakethread.cpp \
     entity.cpp \
     entitymanager.cpp \
-    connection.cpp
+    connection.cpp \
+    snakescore.cpp
 
 HEADERS += \
     person.h \
@@ -37,6 +38,7 @@ HEADERS += \
     config.h \
     entity.h \
     entitymanager.h \
-    connection.h
+    connection.h \
+    snakescore.h
 
 DISTFILES +=

@@ -19,6 +19,8 @@ using namespace config;
 class Snake {
 public:
     Snake(Console &c);
+    int getPoints();
+    short getGridSize();
 private:
     short getGridSize(Console &c, string s); // gets user input grid size
     SnakeGrid grid;

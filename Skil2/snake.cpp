@@ -35,6 +35,14 @@ Snake::Snake(Console &c) {
     c.newLine();
 }
 
+int Snake::getPoints() {
+    return grid.getSnakeSize() - 3;
+}
+
+short Snake::getGridSize() {
+    return grid.getGridSize();
+}
+
 short Snake::getGridSize(Console &c, string s) {
     short in;
     while(true) {

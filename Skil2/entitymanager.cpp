@@ -349,7 +349,8 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
                 names.push_back(computers[i].getName());
             }
         }
-        sort(names.begin(), names.end());
+        sort(names.begin(), names.end()); // sort all the names alphabetically
+        // then we link each name to a entity and add it to a list to get a sorted entity list
         for(unsigned int i = 0; i < names.size(); i++) {
             if(type == PERSON) {
                 for(unsigned int j = 0; j < persons.size(); j++) {
@@ -479,7 +480,7 @@ string EntityManager::capitialize(string s) {
         out[i] = *(c + i);
         if(capitalizeNext && out[i] != ' ') {
             capitalizeNext = false;
-            if(isalpha(out[i])) { // capitalize the letter if it is actually a letter
+            if(isalpha(out[i])) { // capitalize the char if it is actually a letter
                 out[i] -= 32;
             }
         }
@@ -550,3 +551,36 @@ vector<Entity*> EntityManager::getSearchResults(Console &c, int type) {
     return out;
 }
 
+
+void EntityManager::addSnakeScore(Console &c, int score, int grid) {
+    string name = trim(c.getString("Hiscore name", true));
+    if(storage.addSnakeScore(name, score, grid)) {
+        c.println("New hiscore on '"+name+"': "+to_string(score));
+    } else {
+        c.println("Your score wasn't suffiecient enough for '"+name+"' to go on the hiscores.");
+    }
+    vector<SnakeScore> scores = storage.getSnakeScores(grid);
+    vector<SnakeScore> topTenScores;
+    for(int i = 0; i < 10; i++) {
+        int idx = 0;
+        if(scores.size() <= 0) {
+            break;
+        }
+        for(unsigned int j = 1; j < scores.size(); j++) {
+            if(scores[j].getScore() > scores[idx].getScore()) {
+                idx = j;
+            }
+        }
+        topTenScores.push_back(scores[idx]);
+        scores.erase(scores.begin() + idx);
+    }
+    if(topTenScores.size() <= 0) {
+        c.println("No scores to display.");
+    } else {
+        c.println("  \tName:\tScore");
+        for(unsigned int i = 0; i < topTenScores.size(); i++) {
+            c.println(to_string(i + 1) + ".\t"+topTenScores[i].getName()+"\t"+to_string(topTenScores[i].getScore()));
+        }
+    }
+    c.newLine();
+}

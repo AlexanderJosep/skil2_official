@@ -52,6 +52,20 @@ vector<Connection> Storage::getConnections() {
     return connections;
 }
 
+vector<SnakeScore> Storage::getSnakeScores(int grid) {
+    vector<SnakeScore> scores;
+    QSqlQuery query(database);
+    query.exec("SELECT * FROM snake_hiscores WHERE grid_size = "+QString::fromStdString(to_string(grid))+"");
+    while(query.next()){
+       string name = query.value("name").toString().toStdString();
+       int score = query.value("score").toUInt();
+       int gridSize = query.value("grid_size").toUInt();
+       SnakeScore s = SnakeScore(name, score, gridSize);
+       scores.push_back(s);
+    }
+    return scores;
+}
+
 bool Storage::savePerson(Person &person) {
     QSqlQuery query(database);
     int id = 1;
@@ -161,6 +175,37 @@ bool Storage::addConnection(Connection &connection){
 bool Storage::removeConnection(Connection &connection) {
    QSqlQuery query(database);
    return query.exec("DELETE FROM connections WHERE id = "+QString::fromStdString(to_string(connection.getID())));
+}
+
+
+bool Storage::addSnakeScore(string name, int score, int gridSize){
+    QSqlQuery query(database);
+    query.prepare("SELECT * FROM snake_hiscores WHERE name='"+QString::fromStdString(name)+"' AND grid_size=?");
+    query.addBindValue(QString::fromStdString(to_string(gridSize)));
+    query.exec();
+    int oScore = -1;
+    int id = 0;
+    while(query.next()) {
+        oScore = query.value("score").toString().toUInt();
+        id = query.value("id").toString().toUInt();
+        break;
+    }
+    if(oScore > score) {
+        return false;
+    } else if(score > oScore) {
+        if(oScore >= 0) {
+            query.prepare("UPDATE snake_hiscores SET score=? WHERE id = "+QString::fromStdString(to_string(id)));
+            query.addBindValue(QString::fromStdString(to_string(score)));
+        } else {
+            query.prepare("INSERT INTO snake_hiscores (name,score,grid_size) VALUES "
+                          "('"+QString::fromStdString(name)+"',?,?)");
+            query.addBindValue(QString::fromStdString(to_string(score)));
+            query.addBindValue(QString::fromStdString(to_string(gridSize)));
+            query.exec();
+        }
+        return true;
+    }
+    return false;
 }
 
 void Storage::close() {

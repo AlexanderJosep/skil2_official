@@ -8,7 +8,7 @@ SnakeThread::SnakeThread(SnakeGrid *grid, SnakeWidget *widget, Console *c, QMain
 }
 
 void SnakeThread::run() {
-    while( window -> isVisible()) {
+    while(window -> isVisible()) { // we don't wanna keep running if the window has closed
         if(!widget -> hasStarted()) {
             msleep(25);
             continue;

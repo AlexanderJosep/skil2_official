@@ -8,6 +8,7 @@
 #include "person.h"
 #include "computer.h"
 #include "connection.h"
+#include "snakescore.h"
 
 using namespace config;
 
@@ -20,6 +21,7 @@ public:
     void remove(Console &c, vector<Entity*> entities, int type); // remove a entity from a list
     vector<Entity*> getOrganizedEntities(int o, int type); // gets organized entity list which organizes by type o
     vector<Entity*> getSearchResults(Console &c, int type); // gets a search input and find the results according to that
+    void addSnakeScore(Console &c, int score, int grid); // adds a snake score to a list, also prints top 10 hiscores if available
 private:
     short getListIndex(Console &c, int type); // select a index from a list
     short getRealIndex(vector<Entity*> entities, int index, int type); // get the actual index ; the old one was organized in some way
