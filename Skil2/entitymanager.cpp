@@ -122,6 +122,7 @@ void EntityManager::edit(Console &c, vector<Entity*> entities, int type) {
 void EntityManager::remove(Console &c, vector<Entity*> entities, int type) {
     if(entities.size() <= 0) {
         c.println("Nothing to remove.");
+        c.newLine();
         return;
     }
     short index = getRealIndex(entities, getListIndex(c, type), type);

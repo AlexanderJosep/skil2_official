@@ -79,6 +79,7 @@ void Console::printColumns(bool includeIndex, int type) {
 void Console::printEntities(vector<Entity*> entities, bool reverse, bool includeIndex, int type) {
     if(entities.size() <= 0) {
         println("Nothing to display.");
+        newLine();
         return;
     }
     newLine();
@@ -255,9 +256,16 @@ void Console::process() {
         if(i == 6 || i == 7) {
             int type = !getBool("Persons or computers", 'p', 'c');
             vector<Entity*> entities = manager.getOrganizedEntities(1, type); // organized in alphabetical order
-            printEntities(entities, false, true, type); // alphabetical organization
+            if(entities.size() > 0) {
+                printEntities(entities, false, true, type);
+            }
             if(i == 6) { // edit person
-                manager.edit(*this, entities, type);
+                if(entities.size() <= 0) {
+                    println("Please add something to the list before editing.");
+                    newLine();
+                } else {
+                    manager.edit(*this, entities, type);
+                }
             } else { // remove person
                 manager.remove(*this, entities, type);
             }
