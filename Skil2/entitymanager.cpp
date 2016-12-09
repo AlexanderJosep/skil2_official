@@ -542,7 +542,7 @@ vector<Entity*> EntityManager::getSearchResults(Console &c, int type) {
     if(type == CONNECTION) {
         for(unsigned int j = 0; j < connections.size(); j++) {
             // search for either the person or the computer in a connection
-            if(toLowerCase(connections[j].getPerson() -> getName()).find(search) || toLowerCase(connections[j].getComputer() -> getName()).find(search)) {
+            if(toLowerCase(connections[j].getPerson() -> getName()).find(search) != string::npos || toLowerCase(connections[j].getComputer() -> getName()).find(search) != string::npos) {
                 out.push_back(&connections[j]);
             }
         }
