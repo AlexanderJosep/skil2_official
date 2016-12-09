@@ -584,5 +584,6 @@ void EntityManager::addSnakeScore(Console &c, int score, int grid) {
             c.println(to_string(i + 1) + ".\t"+topTenScores[i].getName()+"\t"+to_string(topTenScores[i].getScore()));
         }
     }
+    c.ignoreNextClear();
     c.newLine();
 }
