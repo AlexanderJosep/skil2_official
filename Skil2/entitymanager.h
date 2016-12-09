@@ -21,13 +21,13 @@ public:
 private:
     short getListIndex(Console &c, int type); // select a index from a list
     short getRealIndex(vector<Entity*> entities, int index, int type); // get the actual index ; the old one was organized in some way
-    string getName(Console &c, bool n); // gets the name from user input, n is true if user is creating a new person, false if editing
+    string getName(Console &c, bool n, int type); // gets the name from user input, n is true if user is creating a new person, false if editing
     short getGender(Console &c, bool n); // gets the gender from user input, n is true if user is creating a new person, false if editing
     short getYear(Console &c, string s); // gets a year from user input
     short getDeathYear(Console &c, bool n, int birthYear); // gets the death year from user input, n is true if user is creating a new person, false if editing
     short getComputerType(Console &c, string s); // gets a computer type from user input
     short getYearBuilt(Console &c, bool n);
-    bool validName(string name); // checks if a name is valid or not
+    bool validName(string name, int type); // checks if a name is valid or not
     string trim(string s); // trims the edges of a string for any pesky spaces
     string capitialize(string s); // capitalizes a string
     string toLowerCase(string s); // lowercases a string

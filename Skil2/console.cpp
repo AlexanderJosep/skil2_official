@@ -22,9 +22,16 @@ void Console::newLine() {
     cout << endl;
 }
 
+void Console::ignoreNextClear() {
+    ignoreClear = true;
+}
+
 void Console::clearBuffer() {
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    if(!ignoreClear) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    ignoreClear = false;
 }
 
 void Console::printInstructions() {
@@ -91,12 +98,11 @@ void Console::printEntities(vector<Entity*> entities, bool reverse, bool include
 
 char Console::getChar(string s) {
     print(s + ": ");
-    char c;
-    cin >> c;
-    return c;
+    return getchar();
 }
 
 short Console::getShort(string s) {
+    clearBuffer();
     print(s + ": ");
     short in;
     cin >> in;
@@ -104,15 +110,20 @@ short Console::getShort(string s) {
 }
 
 bool Console::getBool(string s, char y, char n) {
-    char c;
+    int c = 0;
     while(true) {
-        clearBuffer();
+        if(c != 10) {
+            clearBuffer();
+        }
         print(s + " ("+y+"/"+n+"): ");
-        cin >> c;
+        c = getchar();
         if(c == y || c == n) {
             break;
         }
         println("Invalid command!");
+    }
+    if (cin.fail()) {
+       clearBuffer();
     }
     return c == y;
 }
@@ -121,7 +132,7 @@ string Console::getString(string s, bool ignore) {
     string in;
     while(true) {
         if(ignore) {
-            cin.ignore();
+            clearBuffer();
         }
         print(s + " (max 30 chars): ");
         getline(cin, in);
@@ -147,10 +158,13 @@ int Console::getIndex(char c, int type) {
 int Console::getInstruction(int type) {
     int i;
     while(true) {
-        i = getIndex(getChar((type == 0 ? "Instruction" : "Organization")), type);
+        char ch = getChar(type == 0 ? "Instruction" : "Organization");
+        i = getIndex(ch, type);
         if(i < 0) {
             println("Invalid command!");
-            clearBuffer();
+            if(ch != 10) {
+                clearBuffer();
+            }
             continue;
         } else {
             break;
@@ -182,6 +196,7 @@ void Console::process() {
         }
         if(i == 2) { // add person
             manager.add(*this, !getBool("Person or computer", 'p', 'c'));
+            clearBuffer();
         }
         if(i == 3) { // info
             printInstructions();
@@ -192,10 +207,8 @@ void Console::process() {
         if(i == 5) { // clear console
             #ifdef _WIN32
                 system("cls");
-                println("Press 'i' for instructions.");
             #else
                 system("clear");
-                println("Press 'i' for instructions.");
             #endif
         }
         if(i == 6 || i == 7) {

@@ -23,6 +23,7 @@ public:
     void printDisplayInstructions(int type); // prints all display organization instructions
     void printColumns(bool includeIndex, int type); // print all columns
     void printEntities(vector<Entity*> entities, bool reverse, bool includeIndex, int type); // print all entities in a list and reverses the output if reverse is true
+    void ignoreNextClear();
     void clearBuffer(); // clears the stream buffer until it reaches \n
     char getChar(string s); // gets user input char
     short getShort(string s); // gets user input short
@@ -32,6 +33,7 @@ public:
     void process(); // includes the main program loop
 private:
     int getIndex(char c, int type); // gets the index of the basic/organization command
+    bool ignoreClear;
 };
 
 

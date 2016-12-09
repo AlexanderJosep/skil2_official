@@ -16,7 +16,7 @@ namespace config {
     const int PERSON = 0;
     const int COMPUTER = 1;
     const int NUMBER_OF_MACHINES_TYPES = 4;
-    const string MACHINE_TYPES[NUMBER_OF_MACHINES_TYPES] =  {"Mechanic ", "Electronic ", "Transistor ", "Quantum "};
+    const string MACHINE_TYPES[NUMBER_OF_MACHINES_TYPES] =  {"Mechanic", "Electronic", "Transistor", "Quantum"};
 
     /* Commands and organization */
     const int INSTRUCTIONS_LENGTH = 9;

@@ -7,7 +7,7 @@ EntityManager::EntityManager(int currentYear) {
 }
 
 void EntityManager::add(Console &c, int type) {
-    string name = getName(c, true);
+    string name = getName(c, true, type);
     if(type == PERSON) {
         short gender = getGender(c, true);
         short birthYear = getYear(c, "Birth year");
@@ -40,7 +40,7 @@ void EntityManager::edit(Console &c, vector<Entity*> entities, int type) {
     if(type == PERSON) {
         oldName = persons[index].getName();
         c.println("Old name: "+oldName);
-        name = getName(c, false);
+        name = getName(c, false, type);
         short oldGender = persons[index].getGender() ;
         string oldGenderString = (oldGender == 0 ? "Male" : "Female");
         c.println("Old gender: "+oldGenderString);
@@ -63,12 +63,17 @@ void EntityManager::edit(Console &c, vector<Entity*> entities, int type) {
         }
     } else {
         oldName = computers[index].getName();
-        name = getName(c, false);
+        c.println("Old name: "+oldName);
+        name = getName(c, false, type);
         short oldType = computers[index].getType();
         c.println("Old type is "+MACHINE_TYPES[oldType]+".");
         short type = getComputerType(c, "New ID of computer type");
         short oldYear = computers[index].getYear();
-        c.println("Old year built: "+to_string(oldYear));
+        if(oldYear < 0) {
+            c.println("Old computer was not built");
+        } else {
+            c.println("Old year built: "+to_string(oldYear));
+        }
         short yearBuilt = getYearBuilt(c, false);
         if(storage.editComputer(computers[index], oldName, oldYear, oldType)) {
             computers[index].setData(name, yearBuilt, type);
@@ -151,12 +156,12 @@ short EntityManager::getListIndex(Console &c, int type) {
     return index;
 }
 
-string EntityManager::getName(Console &c, bool n) {
+string EntityManager::getName(Console &c, bool n, int type) {
     string s = n ? "Name" : "New name";
     string name = c.getString(s, true);
     while(true) {
         name = trim(name);
-        if(validName(name)) {
+        if(validName(name, type)) {
            name = capitialize(name);
            break;
         } else {
@@ -171,13 +176,10 @@ short EntityManager::getGender(Console &c, bool n) {
     string s = n ? "Gender" : "New gender";
     short gender;
     while(true) {
-        char g = c.getChar(s + " (m/f)");
-        if(g == 'm' || g == 'f') {
-            gender = (g == 'm' ? 0 : 1);
-            break;
-        }
-        c.println("Invalid gender!");
-        c.clearBuffer();
+        c.ignoreNextClear();
+        char g = c.getBool(s, 'm', 'f');
+        gender = (g == 'm' ? 0 : 1);
+        break;
     }
     return gender;
 }
@@ -213,6 +215,7 @@ short EntityManager::getDeathYear(Console &c, bool n, int birthYear) {
 
 short EntityManager::getComputerType(Console &c, string s) {
     short type;
+    c.ignoreNextClear();
     while (true){
         // print out all computer types
         c.print("Computer types (ID in parenthesis): ");
@@ -231,7 +234,6 @@ short EntityManager::getComputerType(Console &c, string s) {
             break;
         }
         c.println("Invalid type!");
-        c.clearBuffer();
     }
     return type - 1;
 }
@@ -374,13 +376,15 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
 }
 
 
-bool EntityManager::validName(string name) {
+bool EntityManager::validName(string name, int type) {
     if(name.length() <= 0 || name.find("  ") != string::npos) {
         return false;
     }
-    for(unsigned int i = 0; i < name.length(); i++) {
-        if(!isalpha(name[i]) && name[i] != 32) {
-            return false;
+    if(type == PERSON) { // computers should be able to have numbers and special chars as names
+        for(unsigned int i = 0; i < name.length(); i++) {
+            if(!isalpha(name[i]) && name[i] != 32) {
+                return false;
+            }
         }
     }
     return true;
