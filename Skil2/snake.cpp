@@ -2,7 +2,7 @@
 using namespace std;
 
 Snake::Snake(Console &c) {
-    short gridSize = getGridSize(c, "Grid size(10-30): ");
+    short gridSize = getGridSize(c, "Grid size(10-30)");
     grid.setGrid(gridSize);
     grid.initialize();
     //start the snake frame
@@ -38,11 +38,9 @@ Snake::Snake(Console &c) {
 short Snake::getGridSize(Console &c, string s) {
     short in;
     while(true) {
-        cout << s;
-        cin >> in;
+        in = c.getShort(s);
         if(in < 10 || in > 30) {
             c.println("Please select a grid size between 10 - 30.");
-            c.clearBuffer();
             continue;
         }
         break;

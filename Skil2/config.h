@@ -37,7 +37,7 @@ namespace config {
                                     "'n' - organize by names in alphabetical order",
                                     "'o' - no organization"};
     const string DISPLAY_COMPUTER_INSTRUCTIONS[DISPLAY_COMPUTER_INSTRUCTIONS_LENGTH] = {"'n' - organize by names in alphabetical order",
-                                    "'y' - organize by year it was built", "'t' - organize by type", "'o' - no organization"};
+                                    "'t' - organize by type", "'y' - organize by year it was built", "'o' - no organization"};
 }
 
 #endif // CONFIG_H
