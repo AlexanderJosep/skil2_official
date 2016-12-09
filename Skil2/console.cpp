@@ -56,11 +56,13 @@ void Console::printColumns(bool includeIndex, int type) {
     if(includeIndex) {
         print("      ");
     }
-    print("Name");
-    addW(type == PERSON ? 30 : 37);
-    print(type == PERSON ? "Gender" : "Computer type");
-    addW(16);
-    print(type == PERSON ? "Birth year" : "Year built");
+    if(type != CONNECTION) {
+        print("Name");
+        addW(type == PERSON ? 30 : 37);
+    }
+    print(type == PERSON ? "Gender" : (type == COMPUTER ? "Computer type" : "Person"));
+    addW(type == CONNECTION ? 32 : 16);
+    print(type == PERSON ? "Birth year" : (type == COMPUTER ? "Year built" : "Computer"));
     if(type == PERSON) {
         addW(16);
         println("Death year");
@@ -70,7 +72,7 @@ void Console::printColumns(bool includeIndex, int type) {
     if(includeIndex) {
         print("      ");
     }
-    for (int i = 0; i < (type == PERSON ? 66 : 57); i++) {
+    for (int i = 0; i < (type == PERSON ? 66 : (type == COMPUTER ? 57 : 60)); i++) {
         print("=");
     }
     newLine();
@@ -223,10 +225,13 @@ void Console::process() {
     while(true) {
         int i = getInstruction(0);
         if(i == 0) { // display
-            int type = !getBool("Persons or computers", 'p', 'c');
-            printDisplayInstructions(type);
-            clearBuffer();
-            int o = getInstruction(1 + type);
+            int type = getOptionIndex("Person, computer or a connection", 'p', 'c', 'o');
+            int o = 0; // no organization
+            if(type != 2) {
+                printDisplayInstructions(type);
+                clearBuffer();
+                o = getInstruction(1 + type);
+            }
             bool rev = getBool("Reverse output", 'y', 'n');
             printEntities(manager.getOrganizedEntities(o, type), rev, false, type);
         }
@@ -236,7 +241,7 @@ void Console::process() {
             ignoreNextClear();
         }
         if(i == 2) { // add person
-            manager.add(*this, getOptionIndex("Person, computer or connection", 'p', 'c', 'o'));
+            manager.add(*this, getOptionIndex("Person, computer or a connection", 'p', 'c', 'o'));
         }
         if(i == 3) { // info
             printInstructions();

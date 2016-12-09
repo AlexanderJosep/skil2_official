@@ -5,6 +5,21 @@ EntityManager::EntityManager(int currentYear) {
     this -> persons = storage.getPersons();
     this -> computers = storage.getComputers();
     this -> connections = storage.getConnections();
+    // set the person and computer pointer in connections
+    for(unsigned int i = 0; i < connections.size(); i++) {
+       for(unsigned int j = 0; j < persons.size(); j++) {
+            if(persons[j].getID() == connections[i].getPersonID()) {
+                connections[i].setPerson(&persons[j]);
+                break;
+            }
+        }
+       for(unsigned int j = 0; j < computers.size(); j++) {
+            if(computers[j].getID() == connections[i].getComputerID()) {
+                connections[i].setComputer(&computers[j]);
+                break;
+            }
+        }
+    }
 }
 
 void EntityManager::end() {
@@ -55,6 +70,8 @@ void EntityManager::add(Console &c, int type) {
             }
         }
         Connection connection = Connection(persons[personIndex].getID(), computers[computerIndex].getID());
+        connection.setPerson(&persons[personIndex]);
+        connection.setComputer(&computers[computerIndex]);
         if(storage.addConnection(connection)) {
             connections.push_back(connection);
             c.println("Connected "+persons[personIndex].getName() +" and "+computers[computerIndex].getName()+" together.");
@@ -289,6 +306,11 @@ short EntityManager::getYearBuilt(Console &c, bool n) {
 
 vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
     vector<Entity*> out;
+    if(type == CONNECTION) {
+        for(unsigned int i = 0; i < connections.size(); i++) {
+            out.push_back(&connections[i]);
+        }
+    }
     if(o == 0 && type == PERSON) {
         for(unsigned int i = 0; i < persons.size(); i++) {
             out.push_back(&persons[i]);
@@ -299,7 +321,7 @@ vector<Entity*> EntityManager::getOrganizedEntities(int o, int type) {
             out.push_back(&computers[i]);
         }
     }
-    if(o == 1) { // organize by names alphabetically
+    if(o == 1 && type != CONNECTION) { // organize by names alphabetically
         vector<string> names;
         if(type == PERSON) {
             for(unsigned int i = 0; i < persons.size(); i++) {
